@@ -6,13 +6,13 @@ export async function POST(request: Request) {
     const { amount } = await request.json();
 
     // Check if keys are present
-    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
       console.warn("Razorpay keys missing in .env file.");
       return NextResponse.json({ error: 'Razorpay keys not configured in .env' }, { status: 500 });
     }
 
     const instance = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
+      key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
 
