@@ -198,3 +198,16 @@ h1, h2, h3, h4, h5, h6 {
 .mt-8 { margin-top: 32px; }
 .py-12 { padding-top: 48px; padding-bottom: 48px; }
 .text-center { text-align: center; }
+
+.cart-grid {
+  display: grid;
+  grid-template-columns: 1fr 450px;
+  gap: 48px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .cart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -216,7 +216,7 @@ export default function CartPage() {
         <h1 style={{ fontSize: '2.5rem', fontWeight: 700 }}>Your Cart & Checkout</h1>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: '1fr 450px', gap: '48px', alignItems: 'start' }}>
+      <div className="cart-grid">
         
         {/* Left Column: Cart Items & Details */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
