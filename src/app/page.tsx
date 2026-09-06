@@ -196,7 +196,15 @@ export default function Home() {
           />
           <button className="btn-primary" style={{ padding: '16px 32px' }}>Subscribe</button>
         </div>
-        <p className="text-secondary" style={{ fontSize: '0.9rem', marginTop: '64px' }}>© 2026 Ported Hub. All rights reserved.</p>
+        <div style={{ marginTop: '64px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Link href="/terms" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem' }}>Terms & Conditions</Link>
+            <Link href="/refund" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem' }}>Refund Policy</Link>
+            <Link href="/contact" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem' }}>Contact Us</Link>
+            <Link href="/privacy" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem' }}>Privacy Policy</Link>
+          </div>
+          <p className="text-secondary" style={{ fontSize: '0.9rem' }}>© 2026 Ported Hub. All rights reserved.</p>
+        </div>
       </footer>
     </div>
   );

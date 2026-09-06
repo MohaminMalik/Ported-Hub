@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
 }
 
-import Footer from '@/components/Footer'
+
 
 export default function RootLayout({
   children,
@@ -39,7 +39,6 @@ export default function RootLayout({
         <main className="main-content">
           {children}
         </main>
-        <Footer />
         <ToastContainer />
       </body>
     </html>
