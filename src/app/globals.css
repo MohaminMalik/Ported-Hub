@@ -211,3 +211,21 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-between;
+  }
+  .nav-links {
+    display: flex !important;
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 8px;
+  }
+}
+

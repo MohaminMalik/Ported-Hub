@@ -31,6 +31,22 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % product.images.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + product.images.length) % product.images.length);
 
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const swipeDistance = touchStartX - touchEndX;
+    
+    if (swipeDistance > 50) nextSlide(); // Swipe left
+    if (swipeDistance < -50) prevSlide(); // Swipe right
+    setTouchStartX(null);
+  };
+
   return (
     <div className="container py-12 animate-fade-in">
       <div style={{ marginBottom: '32px' }}>
@@ -41,7 +57,11 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
 
       <div className="grid grid-cols-2" style={{ gap: '48px', alignItems: 'start' }}>
         {/* Image Gallery */}
-        <div style={{ position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', height: '600px', background: 'var(--surface-color)', border: '1px solid var(--border-color)' }}>
+        <div 
+          style={{ position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', height: '600px', background: 'var(--surface-color)', border: '1px solid var(--border-color)' }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <div style={{ width: '100%', height: '100%', background: product.images[currentSlide], transition: 'background 0.3s ease' }}></div>
           
           {product.images.length > 1 && (

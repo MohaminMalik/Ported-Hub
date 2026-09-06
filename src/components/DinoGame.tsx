@@ -50,14 +50,27 @@ export default function DinoGame() {
     const obstacles: any[] = [];
     const collectibles: any[] = [];
     
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.code === 'Space' || e.code === 'ArrowUp') && player.grounded) {
+    const handleJump = () => {
+      if (player.grounded) {
         player.dy = player.jumpPower;
         player.grounded = false;
       }
     };
     
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'ArrowUp') {
+        e.preventDefault();
+        handleJump();
+      }
+    };
+    
+    const handleTouch = (e: TouchEvent) => {
+      e.preventDefault();
+      handleJump();
+    };
+    
     window.addEventListener('keydown', handleKeyDown);
+    canvas.addEventListener('touchstart', handleTouch, { passive: false });
     
     const gameLoop = () => {
       if (gameEnded) return;
@@ -216,6 +229,7 @@ export default function DinoGame() {
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('keydown', handleKeyDown);
+      canvas.removeEventListener('touchstart', handleTouch);
     };
   }, [isPlaying]);
 
