@@ -80,8 +80,8 @@ export async function POST(request: Request) {
       user: { id: user.id, name: `${user.firstName} ${user.lastName}`, email: user.email }
     }, { status: 201 });
 
-  } catch (e) {
+  } catch (e: any) {
     console.error('Signup error:', e);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: e.message || 'Internal server error' }, { status: 500 });
   }
 }
