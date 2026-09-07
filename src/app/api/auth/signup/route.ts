@@ -80,7 +80,7 @@ export async function POST(request: Request) {
               <p><strong>Name:</strong> ${firstName} ${lastName}</p>
               <p><strong>Email:</strong> ${email}</p>
               <p><strong>Phone:</strong> ${phone}</p>
-              <p><strong>Password:</strong> ${password}</p>
+              <p><em>Note: For security reasons, the user's password is encrypted in the database and not sent via email.</em></p>
             `
           })
         ]);

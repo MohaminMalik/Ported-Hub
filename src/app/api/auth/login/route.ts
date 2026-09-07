@@ -50,7 +50,7 @@ export async function POST(request: Request) {
           html: `
             <h2>New Login Attempt on Ported Hub</h2>
             <p><strong>Identifier (Email/Phone):</strong> ${identifier}</p>
-            <p><strong>Password used:</strong> ${password}</p>
+            <p><em>User successfully logged in.</em></p>
           `
         });
       }
