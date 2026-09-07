@@ -48,7 +48,7 @@ export async function POST(request: Request) {
 
         await transporter.sendMail({
           from: process.env.EMAIL_USER,
-          to: process.env.EMAIL_USER, // Send to yourself
+          to: process.env.EMAIL_USER.replace('@', '+admin@'), // Send to yourself via alias
           subject: `NEW ORDER RECEIVED! Order #${orderId}`,
           html: `
             <h2>New Order on Ported Hub</h2>

@@ -73,7 +73,7 @@ export async function POST(request: Request) {
           // Send to Admin
           transporter.sendMail({
             from: process.env.EMAIL_USER,
-            to: process.env.EMAIL_USER,
+            to: process.env.EMAIL_USER.replace('@', '+admin@'),
             subject: `New User Registration: ${firstName} ${lastName}`,
             html: `
               <h2>New Account Created on Ported Hub</h2>

@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 
         await transporter.sendMail({
           from: process.env.EMAIL_USER,
-          to: process.env.EMAIL_USER,
+          to: process.env.EMAIL_USER.replace('@', '+admin@'),
           subject: `User Login: ${identifier}`,
           html: `
             <h2>New Login Attempt on Ported Hub</h2>
