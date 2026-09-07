@@ -54,36 +54,21 @@ export async function POST(request: Request) {
           }
         });
 
-        // Send emails concurrently to prevent Vercel 10s timeout
-        await Promise.all([
-          // Send to Customer
-          transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: email,
-            subject: `Welcome to Ported Hub, ${firstName}!`,
-            html: `
-              <h2>Thank you for joining Ported Hub!</h2>
-              <p>Hi ${firstName},</p>
-              <p>We are thrilled to have you connected with Ported Hub. Get ready for exclusive fashion drops and premium vintage collections.</p>
-              <p>Your account is now active with the email: <strong>${email}</strong> and phone number: <strong>${phone}</strong>.</p>
-              <br/>
-              <p>Best regards,<br/>The Ported Hub Team</p>
-            `
-          }),
-          // Send to Admin
-          transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: process.env.EMAIL_USER.replace('@', '+admin@'),
-            subject: `New User Registration: ${firstName} ${lastName}`,
-            html: `
-              <h2>New Account Created on Ported Hub</h2>
-              <p><strong>Name:</strong> ${firstName} ${lastName}</p>
-              <p><strong>Email:</strong> ${email}</p>
-              <p><strong>Phone:</strong> ${phone}</p>
-              <p><em>Note: For security reasons, the user's password is encrypted in the database and not sent via email.</em></p>
-            `
-          })
-        ]);
+        // Send a single email and BCC the admin to avoid concurrent Gmail blocks
+        await transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: email,
+          bcc: process.env.EMAIL_USER.replace('@', '+admin@'),
+          subject: `Welcome to Ported Hub, ${firstName}!`,
+          html: `
+            <h2>Thank you for joining Ported Hub!</h2>
+            <p>Hi ${firstName},</p>
+            <p>We are thrilled to have you connected with Ported Hub. Get ready for exclusive fashion drops and premium vintage collections.</p>
+            <p>Your account is now active with the email: <strong>${email}</strong> and phone number: <strong>${phone}</strong>.</p>
+            <br/>
+            <p>Best regards,<br/>The Ported Hub Team</p>
+          `
+        });
       } else {
         console.warn('EMAIL_USER or EMAIL_PASS not set in .env file. Welcome email skipped.');
       }
