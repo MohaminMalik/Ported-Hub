@@ -141,7 +141,7 @@ export default function CartPage() {
       const res = await fetch('/api/razorpay', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: inrAmount })
+        body: JSON.stringify({ amount: inrAmount, shippingDetails, cartItems, phoneNumber })
       });
       const data = await res.json();
 
