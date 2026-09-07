@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     });
 
     if (!user) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json({ error: "You don't have an account, please create an account." }, { status: 401 });
     }
 
     // Verify the password

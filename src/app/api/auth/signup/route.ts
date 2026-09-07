@@ -7,9 +7,9 @@ import { createSession } from '@/utils/session';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { firstName, lastName, email, password } = body;
+    const { firstName, lastName, email, phone, password } = body;
 
-    if (!firstName || !lastName || !email || !password) {
+    if (!firstName || !lastName || !email || !phone || !password) {
       return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
     }
 
@@ -35,6 +35,7 @@ export async function POST(request: Request) {
         firstName,
         lastName,
         email,
+        phone,
         password: hashedPassword,
       },
     });
@@ -42,11 +43,11 @@ export async function POST(request: Request) {
     // Create session cookie
     await createSession(user.id);
 
-    // Attempt to send email to the store owner
+    // Send Welcome Email to the customer
     try {
       if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
         const transporter = nodemailer.createTransport({
-          service: 'gmail', // Works automatically with Gmail app passwords
+          service: 'gmail',
           auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
@@ -55,22 +56,22 @@ export async function POST(request: Request) {
 
         await transporter.sendMail({
           from: process.env.EMAIL_USER,
-          to: process.env.EMAIL_USER, // Sending to yourself so you receive the details
-          subject: `New User Sign Up: ${firstName} ${lastName}`,
+          to: email, // Send to the customer's email
+          subject: `Welcome to Ported Hub, ${firstName}!`,
           html: `
-            <h2>New Account Created on Ported Hub</h2>
-            <p><strong>Name:</strong> ${firstName} ${lastName}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Password:</strong> ${password}</p>
+            <h2>Thank you for joining Ported Hub!</h2>
+            <p>Hi ${firstName},</p>
+            <p>We are thrilled to have you connected with Ported Hub. Get ready for exclusive fashion drops and premium vintage collections.</p>
+            <p>Your account is now active with the email: <strong>${email}</strong> and phone number: <strong>${phone}</strong>.</p>
             <br/>
-            <p><em>Note: This password was hashed before saving in the database for security.</em></p>
+            <p>Best regards,<br/>The Ported Hub Team</p>
           `
         });
       } else {
-        console.warn('EMAIL_USER or EMAIL_PASS not set in .env file. Email skipped.');
+        console.warn('EMAIL_USER or EMAIL_PASS not set in .env file. Welcome email skipped.');
       }
     } catch (emailError) {
-      console.error('Email failed to send.', emailError);
+      console.error('Welcome email failed to send.', emailError);
     }
 
     return NextResponse.json({ 

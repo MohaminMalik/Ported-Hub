@@ -9,6 +9,7 @@ export default function SignUpPage() {
     firstName: '',
     lastName: '',
     email: '',
+    phone: '',
     password: '',
     confirmPassword: '',
   });
@@ -96,6 +97,19 @@ export default function SignUpPage() {
               onChange={handleChange}
               style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit' }} 
               placeholder="john@example.com" 
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Phone Number</label>
+            <input 
+              type="tel" 
+              name="phone"
+              required
+              value={formData.phone}
+              onChange={handleChange}
+              style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit' }} 
+              placeholder="+91 9876543210" 
             />
           </div>
 
