@@ -40,6 +40,46 @@ export default function CartPage() {
     zip: ''
   });
 
+  useEffect(() => {
+    // Try to fetch logged-in user profile to pre-fill address
+    fetch('/api/user/profile')
+      .then(res => {
+        if (res.ok) return res.json();
+        return null;
+      })
+      .then(data => {
+        if (data) {
+          setShippingDetails({
+            firstName: data.firstName || '',
+            lastName: data.lastName || '',
+            email: data.email || '',
+            house: data.house || '',
+            street: data.street || '',
+            landmark: data.landmark || '',
+            city: data.city || '',
+            zip: data.zip || ''
+          });
+          if (data.phone) {
+            // Very basic parse to separate country code and phone number
+            const phoneStr = data.phone as string;
+            if (phoneStr.startsWith('+91')) {
+              setCountryCode('+91');
+              setPhoneNumber(phoneStr.replace('+91', '').trim());
+            } else if (phoneStr.startsWith('+1')) {
+              setCountryCode('+1');
+              setPhoneNumber(phoneStr.replace('+1', '').trim());
+            } else if (phoneStr.startsWith('+44')) {
+              setCountryCode('+44');
+              setPhoneNumber(phoneStr.replace('+44', '').trim());
+            } else {
+              setPhoneNumber(phoneStr);
+            }
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setShippingDetails(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };

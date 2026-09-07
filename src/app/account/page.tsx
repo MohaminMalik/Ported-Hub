@@ -148,7 +148,9 @@ export default function AccountPage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Saved Address</h2>
                 {!isEditingAddress && (
-                  <button onClick={() => setIsEditingAddress(true)} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>Edit Address</button>
+                  <button onClick={() => setIsEditingAddress(true)} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
+                    {userData?.house ? 'Edit Address' : '+ Add New Address'}
+                  </button>
                 )}
               </div>
               
