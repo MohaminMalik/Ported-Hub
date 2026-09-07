@@ -58,7 +58,7 @@ export async function POST(request: Request) {
         await transporter.sendMail({
           from: process.env.EMAIL_USER,
           to: email,
-          bcc: process.env.EMAIL_USER.replace('@', '+admin@'),
+          bcc: process.env.EMAIL_USER,
           subject: `Welcome to Ported Hub, ${firstName}!`,
           html: `
             <h2>Thank you for joining Ported Hub!</h2>
