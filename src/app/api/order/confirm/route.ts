@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { prisma } from '@/utils/prisma';
+import { getSession } from '@/utils/session';
 
 export async function POST(request: Request) {
   try {
@@ -8,6 +10,25 @@ export async function POST(request: Request) {
 
     if (!shippingDetails || !cartItems) {
       return NextResponse.json({ error: 'Missing order details' }, { status: 400 });
+    }
+
+    // Try to get logged in user
+    const session = await getSession();
+    
+    // Save Order to Database
+    try {
+      await prisma.order.create({
+        data: {
+          userId: session ? session.userId : null,
+          totalAmount: total,
+          paymentId: paymentId || orderId,
+          shippingDetails: JSON.stringify(shippingDetails),
+          cartItems: JSON.stringify(cartItems),
+          status: 'Processing',
+        }
+      });
+    } catch (dbError) {
+      console.error('Failed to save order to DB:', dbError);
     }
 
     try {

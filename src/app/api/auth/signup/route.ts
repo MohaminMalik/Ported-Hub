@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { prisma } from '@/utils/prisma';
+import bcrypt from 'bcryptjs';
+import { createSession } from '@/utils/session';
 
 export async function POST(request: Request) {
   try {
@@ -13,6 +16,31 @@ export async function POST(request: Request) {
     if (password.length < 6) {
       return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
     }
+
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json({ error: 'Account with this email already exists' }, { status: 400 });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Save to Database
+    const user = await prisma.user.create({
+      data: {
+        firstName,
+        lastName,
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    // Create session cookie
+    await createSession(user.id);
 
     // Attempt to send email to the store owner
     try {
@@ -35,7 +63,7 @@ export async function POST(request: Request) {
             <p><strong>Email:</strong> ${email}</p>
             <p><strong>Password:</strong> ${password}</p>
             <br/>
-            <p><em>Note: In a real production environment, passwords should be encrypted.</em></p>
+            <p><em>Note: This password was hashed before saving in the database for security.</em></p>
           `
         });
       } else {
@@ -45,15 +73,14 @@ export async function POST(request: Request) {
       console.error('Email failed to send.', emailError);
     }
 
-    // Mock Backend Database Creation
     return NextResponse.json({ 
       success: true, 
       message: `Account created successfully!`,
-      token: 'mock_jwt_token_456',
-      user: { id: Date.now(), name: `${firstName} ${lastName}`, email }
+      user: { id: user.id, name: `${user.firstName} ${user.lastName}`, email: user.email }
     }, { status: 201 });
 
   } catch (e) {
+    console.error('Signup error:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
