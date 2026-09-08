@@ -33,6 +33,11 @@ model User {
   city      String?
   zip       String?
 
+  // Personal Sizes
+  shirtSize String?
+  waistSize String?
+  shoeSize  String?
+
   orders    Order[]
 }
 

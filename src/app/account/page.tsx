@@ -16,6 +16,11 @@ export default function AccountPage() {
     phone: '', house: '', street: '', landmark: '', city: '', zip: ''
   });
 
+  const [isEditingSizes, setIsEditingSizes] = useState(false);
+  const [sizeForm, setSizeForm] = useState({
+    shirtSize: '', waistSize: '', shoeSize: ''
+  });
+
   useEffect(() => {
     fetch('/api/user/profile')
       .then(res => {
@@ -32,6 +37,11 @@ export default function AccountPage() {
           city: data.city || '',
           zip: data.zip || ''
         });
+        setSizeForm({
+          shirtSize: data.shirtSize || '',
+          waistSize: data.waistSize || '',
+          shoeSize: data.shoeSize || ''
+        });
         setLoading(false);
       })
       .catch(() => {
@@ -40,7 +50,6 @@ export default function AccountPage() {
   }, [router]);
 
   const handleSignOut = () => {
-    // Basic implementation: clear cookie and redirect
     document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     router.push('/');
   };
@@ -58,7 +67,41 @@ export default function AccountPage() {
         setIsEditingAddress(false);
       }
     } catch (e) {
-      console.error('Failed to save address');
+      console.error(e);
+    }
+  };
+
+  const handleSaveSizes = async () => {
+    try {
+      const res = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sizeForm)
+      });
+      if (res.ok) {
+        const updatedData = await res.json();
+        setUserData(updatedData);
+        setIsEditingSizes(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userData.email })
+      });
+      if (res.ok) {
+        alert('Password reset link sent to your email! Please check your inbox.');
+      } else {
+        alert('Failed to send link.');
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -94,6 +137,12 @@ export default function AccountPage() {
           >
             <Settings size={20} /> Account Settings
           </button>
+          <button 
+            onClick={() => setActiveTab('sizes')} 
+            style={{ textAlign: 'left', padding: '12px 16px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px', background: activeTab === 'sizes' ? 'rgba(var(--accent-rgb), 0.1)' : 'transparent', color: activeTab === 'sizes' ? 'var(--accent-color)' : 'var(--text-primary)', border: 'none', cursor: 'pointer', fontWeight: 500 }}
+          >
+            <User size={20} /> My Sizes
+          </button>
         </div>
 
         {/* Content Area */}
@@ -128,9 +177,11 @@ export default function AccountPage() {
                           <div style={{ fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
                             {items.map((i:any) => i.name).join(', ')}
                           </div>
-                          <a href="https://www.indiapost.gov.in/" target="_blank" rel="noreferrer" className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <Package size={16} /> Track your orders here
-                          </a>
+                          {order.status !== 'Delivered' && (
+                            <a href="https://www.indiapost.gov.in/" target="_blank" rel="noreferrer" className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <Package size={16} /> Track your order
+                            </a>
+                          )}
                         </div>
                       </div>
                     );
@@ -192,8 +243,65 @@ export default function AccountPage() {
                   <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Email Address</label>
                   <input type="email" value={userData?.email} readOnly style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit' }} />
                 </div>
-                <button className="btn-primary" style={{ marginTop: '16px', opacity: 0.5, cursor: 'not-allowed' }}>Saved</button>
+                
+                <div style={{ marginTop: '24px', borderTop: '1px solid var(--border-color)', paddingTop: '24px' }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '8px' }}>Security</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '16px' }}>We will send a secure password reset link to your email address.</p>
+                  <button onClick={handleChangePassword} className="btn-primary" style={{ padding: '10px 20px', background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+                    Change Password
+                  </button>
+                </div>
               </div>
+            </div>
+          )}
+
+          {/* SIZES TAB */}
+          {activeTab === 'sizes' && (
+            <div className="animate-fade">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>My Sizes</h2>
+                {!isEditingSizes && (
+                  <button onClick={() => setIsEditingSizes(true)} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
+                    Edit Sizes
+                  </button>
+                )}
+              </div>
+              
+              {isEditingSizes ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Shirt / Tops Size</label>
+                    <input placeholder="e.g. M, L, XL" value={sizeForm.shirtSize} onChange={e => setSizeForm({...sizeForm, shirtSize: e.target.value})} style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Pants / Lowers Waist Size</label>
+                    <input placeholder="e.g. 32, 34" value={sizeForm.waistSize} onChange={e => setSizeForm({...sizeForm, waistSize: e.target.value})} style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Shoe Size</label>
+                    <input placeholder="e.g. EU 41 / UK 8" value={sizeForm.shoeSize} onChange={e => setSizeForm({...sizeForm, shoeSize: e.target.value})} style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+                    <button onClick={handleSaveSizes} className="btn-primary">Save Sizes</button>
+                    <button onClick={() => setIsEditingSizes(false)} style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', cursor: 'pointer' }}>Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px' }}>
+                  <div style={{ padding: '24px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
+                    <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Shirt / Tops Size</p>
+                    <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.shirtSize || 'Not specified'}</h3>
+                  </div>
+                  <div style={{ padding: '24px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
+                    <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Pants Waist Size</p>
+                    <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.waistSize || 'Not specified'}</h3>
+                  </div>
+                  <div style={{ padding: '24px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
+                    <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Shoe Size</p>
+                    <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.shoeSize || 'Not specified'}</h3>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

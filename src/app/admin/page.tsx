@@ -172,6 +172,7 @@ export default function AdminDashboard() {
                     <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>ID</th>
                     <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Name</th>
                     <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Email</th>
+                    <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Sizes (Top/Waist/Shoe)</th>
                     <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Role</th>
                   </tr>
                 </thead>
@@ -181,6 +182,9 @@ export default function AdminDashboard() {
                       <td style={{ padding: '16px 8px' }}>#{u.id}</td>
                       <td style={{ padding: '16px 8px', fontWeight: 500 }}>{u.firstName} {u.lastName}</td>
                       <td style={{ padding: '16px 8px' }}>{u.email}</td>
+                      <td style={{ padding: '16px 8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                        {u.shirtSize || '-'} / {u.waistSize || '-'} / {u.shoeSize || '-'}
+                      </td>
                       <td style={{ padding: '16px 8px' }}>
                         <select 
                           value={u.role} 

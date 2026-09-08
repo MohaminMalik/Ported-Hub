@@ -40,18 +40,22 @@ export async function PUT(request: Request) {
 
   try {
     const body = await request.json();
-    const { phone, house, street, landmark, city, zip } = body;
+    const { phone, house, street, landmark, city, zip, shirtSize, waistSize, shoeSize } = body;
+
+    const dataToUpdate: any = {};
+    if (phone !== undefined) dataToUpdate.phone = phone;
+    if (house !== undefined) dataToUpdate.house = house;
+    if (street !== undefined) dataToUpdate.street = street;
+    if (landmark !== undefined) dataToUpdate.landmark = landmark;
+    if (city !== undefined) dataToUpdate.city = city;
+    if (zip !== undefined) dataToUpdate.zip = zip;
+    if (shirtSize !== undefined) dataToUpdate.shirtSize = shirtSize;
+    if (waistSize !== undefined) dataToUpdate.waistSize = waistSize;
+    if (shoeSize !== undefined) dataToUpdate.shoeSize = shoeSize;
 
     const updatedUser = await prisma.user.update({
       where: { id: session.userId },
-      data: {
-        phone,
-        house,
-        street,
-        landmark,
-        city,
-        zip
-      }
+      data: dataToUpdate
     });
 
     const { password, ...userWithoutPassword } = updatedUser;
