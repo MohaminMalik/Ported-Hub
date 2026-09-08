@@ -129,7 +129,7 @@ export default function AdminDashboard() {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Manage Products</h2>
-                <button className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px' }}>
+                <button onClick={() => router.push('/admin/add-product')} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px' }}>
                   <Plus size={18} /> Add Product
                 </button>
               </div>

@@ -23,3 +23,29 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const product = await prisma.product.create({
+      data: {
+        name: body.name,
+        description: body.description,
+        price: body.price,
+        category: body.category,
+        size: body.size,
+        condition: body.condition,
+        material: body.material,
+        era: body.era,
+        color: body.color,
+        brand: body.brand,
+        thriftStory: body.thriftStory,
+        images: body.images
+      }
+    });
+    return NextResponse.json(product);
+  } catch (error) {
+    console.error('Add product error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
