@@ -91,11 +91,33 @@ export default function CartPage() {
     window.dispatchEvent(new Event('cartUpdated'));
   };
 
-  const suggestedProducts = [
-    { id: 21, name: 'Vintage Wash Jeans', size: '32', price: 45.00, image: 'linear-gradient(135deg, #1e3c72, #2a5298)' },
-    { id: 22, name: 'Retro Windbreaker', size: 'M', price: 65.00, image: 'linear-gradient(135deg, #00B894, #55EFC4)' },
-    { id: 23, name: 'Canvas Tote Bag', size: 'One Size', price: 20.00, image: 'linear-gradient(135deg, #FD79A8, #FAB1A0)' },
-  ];
+  const [suggestedProducts, setSuggestedProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    // If cart has items, pick the most common category, else fetch random products
+    let url = '/api/products';
+    if (cartItems.length > 0) {
+      const categories = cartItems.map(i => i.category).filter(Boolean);
+      if (categories.length > 0) {
+        // Just take the first category for simplicity
+        url = `/api/products?category=${categories[0]}`;
+      }
+    }
+    
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error && Array.isArray(data)) {
+          // Filter out items already in cart
+          const inCartIds = new Set(cartItems.map(i => i.id));
+          const available = data.filter(p => !inCartIds.has(p.id));
+          // Take up to 3 random suggestions
+          const shuffled = available.sort(() => 0.5 - Math.random());
+          setSuggestedProducts(shuffled.slice(0, 3));
+        }
+      })
+      .catch(console.error);
+  }, [cartItems]);
 
   const addSuggestedItem = (product: any) => {
     if (cartItems.some(item => item.id === product.id)) {
@@ -258,7 +280,7 @@ export default function CartPage() {
             <div className="grid grid-cols-1" style={{ gap: '16px' }}>
               {suggestedProducts.map(product => (
                 <div key={product.id} style={{ display: 'flex', gap: '16px', alignItems: 'center', padding: '16px', background: 'var(--surface-color)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                  <div style={{ width: '60px', height: '60px', borderRadius: '8px', background: product.image }}></div>
+                  <div style={{ width: '60px', height: '60px', borderRadius: '8px', background: product.image || (product.images && product.images[0]) || 'var(--surface-hover)' }}></div>
                   <div style={{ flex: 1 }}>
                     <h4 style={{ fontWeight: 600, fontSize: '1rem' }}>{product.name}</h4>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{formatPrice(product.price)}</p>
