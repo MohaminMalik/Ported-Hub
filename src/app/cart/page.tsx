@@ -19,7 +19,7 @@ export default function CartPage() {
       // Fallback if empty to show design
       setCartItems([
         { id: 1, cartId: 1, name: 'Vintage Flannel Shirt', size: 'L', price: 25.00, image: 'linear-gradient(135deg, #FF6B6B, #FF8E8B)' },
-        { id: 10, cartId: 2, name: 'Chunky Sneakers', size: 'US 10', price: 60.00, image: 'linear-gradient(135deg, #0984E3, #74B9FF)' },
+        { id: 10, cartId: 2, name: 'Chunky Sneakers', size: 'US 10', price: 60.00, image: "url('/images/shoes/diki1.jpeg') center/cover" },
       ]);
     }
   }, []);

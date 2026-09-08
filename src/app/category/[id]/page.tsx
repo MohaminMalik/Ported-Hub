@@ -4,7 +4,6 @@ import { ArrowLeft } from 'lucide-react';
 
 const mockProducts = {
   'shirts': [
-    { id: 1, name: 'Vintage Flannel Shirt', description: 'Classic red and black lumberjack flannel.', price: '25.00', images: ['linear-gradient(135deg, #FF6B6B, #FF8E8B)', 'linear-gradient(135deg, #FF8E8B, #FF6B6B)'] },
     { id: 2, name: 'Denim Button-up', description: 'Light wash denim shirt in excellent condition.', price: '30.00', images: ['linear-gradient(135deg, #4a69bd, #6a89cc)', 'linear-gradient(135deg, #6a89cc, #4a69bd)'] },
     { id: 3, name: 'Silk Patterned Shirt', description: 'Abstract 80s pattern silk blend shirt.', price: '40.00', images: ['linear-gradient(135deg, #b71540, #e55039)'] },
   ],
@@ -16,14 +15,14 @@ const mockProducts = {
     { id: 6, name: 'Retro Windbreaker', description: 'Colorful 80s style windbreaker.', price: '35.00', images: ['linear-gradient(135deg, #6C5CE7, #A29BFE)'] },
     { id: 7, name: 'Varsity Jacket', description: 'Classic wool varsity jacket with leather sleeves.', price: '85.00', images: ['linear-gradient(135deg, #e1b12c, #fbc531)', 'linear-gradient(135deg, #2f3640, #353b48)'] },
   ],
-  'leather-jackets': [
-    { id: 8, name: 'Biker Leather Jacket', description: 'Heavyweight black leather biker jacket.', price: '150.00', images: ['linear-gradient(135deg, #2D3436, #636E72)', 'linear-gradient(135deg, #1e272e, #485460)'] },
-  ],
+  'leather-jackets': [],
   'bags': [
     { id: 9, name: 'Canvas Tote', description: 'Durable vintage canvas tote bag.', price: '15.00', images: ['linear-gradient(135deg, #FD79A8, #FAB1A0)'] },
   ],
   'shoes': [
-    { id: 10, name: 'Chunky Sneakers', description: '90s style chunky sole sneakers.', price: '60.00', images: ['linear-gradient(135deg, #0984E3, #74B9FF)'] },
+    { id: 1, name: 'Dolce & Gabbana Vintage Leather Boots', description: 'Classic Chestnut brown boots with double stitch detailing.  Excellent condition, Comfortable and durable. Low stacked leather heel.', price: '2,999', images: ["url('/images/shoes/dg1.jpeg') center/cover", "url('/images/shoes/dg2.jpeg') center/cover", "url('/images/shoes/dg3.jpeg') center/cover", "url('/images/shoes/dg4.jpeg') center/cover", "url('/images/shoes/dg5.jpeg') center/cover", "url('/images/shoes/dg6.jpeg') center/cover", "url('/images/shoes/dg7.jpeg') center/cover", "url('/images/shoes/dg8.jpeg') center/cover"] },
+    { id: 8, name: 'Biker Leather Jacket', description: 'Heavyweight black leather biker jacket.', price: '150.00', images: ["url('/images/shoes/zara1.jpeg') center/cover", "url('/images/shoes/zara2.jpeg') center/cover", "url('/images/shoes/zara3.jpeg') center/cover", "url('/images/shoes/zara4.jpeg') center/cover", "url('/images/shoes/zara5.jpeg') center/cover"] },
+    { id: 10, name: 'Chunky Sneakers', description: '90s style chunky sole sneakers.', price: '60.00', images: ["url('/images/shoes/diki1.jpeg') center/cover", "url('/images/shoes/diki2.jpeg') center/cover", "url('/images/shoes/diki3.jpeg') center/cover", "url('/images/shoes/diki4.jpeg') center/cover", "url('/images/shoes/diki5.jpeg') center/cover", "url('/images/shoes/diki6.jpeg') center/cover"] },
   ],
   'sweaters': [
     { id: 11, name: 'Knit Cardigan', description: 'Oversized wool knit cardigan.', price: '45.00', images: ['linear-gradient(135deg, #E17055, #FFEAA7)'] },

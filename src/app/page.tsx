@@ -8,15 +8,15 @@ const categories = [
   { id: 'jackets', name: 'Jackets', gradient: 'linear-gradient(135deg, #6C5CE7, #A29BFE)' },
   { id: 'leather-jackets', name: 'Leather Jackets', gradient: 'linear-gradient(135deg, #2D3436, #636E72)' },
   { id: 'bags', name: 'Bags', gradient: 'linear-gradient(135deg, #FD79A8, #FAB1A0)' },
-  { id: 'shoes', name: 'Shoes', gradient: 'linear-gradient(135deg, #0984E3, #74B9FF)' },
+  { id: 'shoes', name: 'Shoes', gradient: "url('/images/shoes/shoebox.jpeg') center/cover" },
   { id: 'sweaters', name: 'Sweaters', gradient: 'linear-gradient(135deg, #E17055, #FFEAA7)' },
   { id: 'hoodies', name: 'Hoodies', gradient: 'linear-gradient(135deg, #00B894, #55EFC4)' },
 ];
 
 const featuredProducts = [
-  { id: 1, name: 'Vintage Flannel Shirt', description: 'Classic red and black lumberjack flannel.', price: '25.00', images: ['linear-gradient(135deg, #FF6B6B, #FF8E8B)', 'linear-gradient(135deg, #FF8E8B, #FF6B6B)'] },
-  { id: 8, name: 'Biker Leather Jacket', description: 'Heavyweight black leather biker jacket.', price: '150.00', images: ['linear-gradient(135deg, #2D3436, #636E72)', 'linear-gradient(135deg, #1e272e, #485460)'] },
-  { id: 10, name: 'Chunky Sneakers', description: '90s style chunky sole sneakers.', price: '60.00', images: ['linear-gradient(135deg, #0984E3, #74B9FF)'] },
+  { id: 1, name: 'Dolce & Gabbana Vintage Leather Boots', description: 'Classic Chestnut brown boots with double stitch detailing.  Excellent condition, Comfortable and durable. Low stacked leather heel.', price: '2,999', images: ["url('/images/shoes/dg1.jpeg') center/cover", "url('/images/shoes/dg2.jpeg') center/cover", "url('/images/shoes/dg3.jpeg') center/cover", "url('/images/shoes/dg4.jpeg') center/cover", "url('/images/shoes/dg5.jpeg') center/cover", "url('/images/shoes/dg6.jpeg') center/cover", "url('/images/shoes/dg7.jpeg') center/cover", "url('/images/shoes/dg8.jpeg') center/cover"] },
+  { id: 8, name: 'Biker Leather Jacket', description: 'Heavyweight black leather biker jacket.', price: '150.00', images: ["url('/images/shoes/zara1.jpeg') center/cover", "url('/images/shoes/zara2.jpeg') center/cover", "url('/images/shoes/zara3.jpeg') center/cover", "url('/images/shoes/zara4.jpeg') center/cover", "url('/images/shoes/zara5.jpeg') center/cover"] },
+  { id: 10, name: 'Chunky Sneakers', description: '90s style chunky sole sneakers.', price: '60.00', images: ["url('/images/shoes/diki1.jpeg') center/cover", "url('/images/shoes/diki2.jpeg') center/cover", "url('/images/shoes/diki3.jpeg') center/cover", "url('/images/shoes/diki4.jpeg') center/cover", "url('/images/shoes/diki5.jpeg') center/cover", "url('/images/shoes/diki6.jpeg') center/cover"] },
 ];
 
 export default function Home() {

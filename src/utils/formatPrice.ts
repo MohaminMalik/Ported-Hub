@@ -1,5 +1,5 @@
-export function formatPrice(usdPrice: number | string): string {
-  const usd = typeof usdPrice === 'string' ? parseFloat(usdPrice) : usdPrice;
-  const inr = Math.round(usd * 83.5); // Approximate exchange rate
-  return `₹${inr.toLocaleString('en-IN')}`;
+export function formatPrice(price: number | string): string {
+  const cleanPrice = typeof price === 'string' ? price.replace(/,/g, '') : price;
+  const inr = typeof cleanPrice === 'string' ? parseFloat(cleanPrice) : cleanPrice;
+  return `₹${Math.round(inr).toLocaleString('en-IN')}`;
 }
