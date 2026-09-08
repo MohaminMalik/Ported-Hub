@@ -1,6 +1,8 @@
 'use client';
 import { useState, use } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { showToast } from '@/components/Toast';
 import { ArrowLeft, ShoppingCart, Truck, RefreshCcw, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 import { formatPrice } from '@/utils/formatPrice';
 
@@ -47,6 +49,31 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     if (swipeDistance > 50) nextSlide(); // Swipe left
     if (swipeDistance < -50) prevSlide(); // Swipe right
     setTouchStartX(null);
+  };
+
+  const router = useRouter();
+
+  const handleAddToCart = () => {
+    const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    
+    // Check if item already exists in cart
+    if (currentCart.some((item: any) => item.id === product.id)) {
+      showToast(`${product.name} is already in your cart!`, 'error');
+      return;
+    }
+    
+    // Parse price to float
+    const parsedPrice = typeof product.price === 'string' ? parseFloat(product.price.replace(/,/g, '')) : product.price;
+    const newProduct = { ...product, price: parsedPrice, size: product.size || 'One Size', cartId: Date.now(), image: product.images[0] };
+    
+    currentCart.push(newProduct);
+    localStorage.setItem('cart', JSON.stringify(currentCart));
+    
+    // Notify Header to update badge
+    window.dispatchEvent(new Event('cartUpdated'));
+    
+    showToast(`${product.name} added to cart!`, 'success');
+    router.push('/cart');
   };
 
   return (
@@ -120,11 +147,9 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
             </p>
           </div>
 
-          <Link href="/cart" style={{ textDecoration: 'none' }}>
-            <button className="btn-primary" style={{ width: '100%', padding: '18px', fontSize: '1.2rem', marginBottom: '40px', display: 'flex', justifyContent: 'center' }}>
-              <ShoppingCart size={24} /> Add to Cart
-            </button>
-          </Link>
+          <button onClick={handleAddToCart} className="btn-primary" style={{ width: '100%', padding: '18px', fontSize: '1.2rem', marginBottom: '40px', display: 'flex', justifyContent: 'center' }}>
+            <ShoppingCart size={24} /> Add to Cart
+          </button>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', borderTop: '1px solid var(--border-color)', paddingTop: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>

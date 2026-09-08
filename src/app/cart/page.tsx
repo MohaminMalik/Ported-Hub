@@ -13,15 +13,7 @@ export default function CartPage() {
   useEffect(() => {
     // Load from local storage to sync with homepage additions
     const savedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    if (savedCart.length > 0) {
-      setCartItems(savedCart);
-    } else {
-      // Fallback if empty to show design
-      setCartItems([
-        { id: 1, cartId: 1, name: 'Dolce & Gabbana Vintage Leather Boots', size: 'UK 7', price: 2999, image: "url('/images/shoes/dg1.jpeg') center/cover" },
-        { id: 10, cartId: 2, name: 'Dickies Suede Vintage Chelsea ', size: 'UK 8', price: 1299, image: "url('/images/shoes/diki1.jpeg') center/cover" },
-      ]);
-    }
+    setCartItems(savedCart);
   }, []);
 
   const [countryCode, setCountryCode] = useState('+91');
