@@ -151,6 +151,13 @@ export default function Header() {
                               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Orders & Settings</div>
                             </div>
                           </button>
+                          <button onClick={() => { setIsUserMenuOpen(false); router.push('/admin'); }} style={{ width: '100%', padding: '12px', textAlign: 'left', color: 'var(--text-primary)', borderRadius: '8px', background: 'transparent', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center', gap: '12px' }} onMouseOver={(e) => e.currentTarget.style.background = 'var(--surface-hover)'} onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}>
+                            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(var(--accent-rgb), 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-color)' }}><Settings size={18} /></div>
+                            <div>
+                              <div style={{ fontWeight: 600 }}>Admin Panel</div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Manage store</div>
+                            </div>
+                          </button>
                           <div style={{ height: '1px', background: 'var(--border-color)', margin: '4px 0' }}></div>
                           <button onClick={() => { setIsLoggedIn(false); setIsUserMenuOpen(false); router.push('/'); }} style={{ width: '100%', padding: '12px', textAlign: 'left', color: 'var(--accent-color)', borderRadius: '8px', background: 'transparent', cursor: 'pointer', border: 'none', display: 'flex', alignItems: 'center', gap: '12px' }} onMouseOver={(e) => e.currentTarget.style.background = 'var(--surface-hover)'} onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}>
                             <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(230, 57, 70, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#E63946' }}><LogOut size={18} /></div>
