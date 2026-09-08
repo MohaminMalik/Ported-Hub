@@ -12,7 +12,7 @@ export default function TrackOrderPage() {
           <strong>Note:</strong> Just placed an order? Your official Tracking ID will be sent to your registered email and phone number shortly.
         </div>
         
-        <div className="card mb-12" style={{ padding: '24px md:32px' }}>
+        <div className="card mb-12 p-6 md:p-8">
           <div className="flex flex-col sm:flex-row gap-4">
             <input 
               type="text" 

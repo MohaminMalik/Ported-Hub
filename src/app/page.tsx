@@ -59,7 +59,7 @@ export default function Home() {
             View All <ArrowRight size={16} />
           </Link>
         </div>
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {featuredProducts.map(product => (
             <ProductCard key={product.id} product={product} />
           ))}
@@ -155,7 +155,7 @@ export default function Home() {
           <h2 style={{ fontSize: '2.5rem', fontWeight: 700 }}>Follow Our Hunts</h2>
           <p className="text-secondary">@PortedHub on Instagram</p>
         </div>
-        <div className="grid grid-cols-4" style={{ gap: '16px' }}>
+        <div className="grid grid-cols-2 md:grid-cols-4" style={{ gap: '16px' }}>
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="card" style={{ paddingBottom: '100%', position: 'relative' }}>
               <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(${135 + i * 20}deg, #1C1C1E, #2C2C2E)` }}></div>

@@ -205,7 +205,7 @@ export default function AccountPage() {
         </div>
 
         {/* Content Area */}
-        <div className="card" style={{ padding: '32px' }}>
+        <div className="card flex-1 w-full" style={{ padding: '32px' }}>
           
           {/* ORDERS TAB */}
           {activeTab === 'orders' && (
