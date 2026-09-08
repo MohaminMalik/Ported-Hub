@@ -380,16 +380,16 @@ export default function AccountPage() {
                 </div>
               ) : (
                 <>
-                  <div style={{ display: 'flex', gap: '16px' }}>
-                    <div style={{ flex: 1, padding: '24px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1 p-6 border border-[var(--border-color)] rounded-xl bg-[var(--surface-hover)]">
                       <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Shirt / Tops Size</p>
                       <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.shirtSize || 'Not specified'}</h3>
                     </div>
-                    <div style={{ flex: 1, padding: '24px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
+                    <div className="flex-1 p-6 border border-[var(--border-color)] rounded-xl bg-[var(--surface-hover)]">
                       <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Pants Waist Size</p>
                       <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.waistSize || 'Not specified'}</h3>
                     </div>
-                    <div style={{ flex: 1, padding: '24px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
+                    <div className="flex-1 p-6 border border-[var(--border-color)] rounded-xl bg-[var(--surface-hover)]">
                       <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Shoe Size</p>
                       <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.shoeSize || 'Not specified'}</h3>
                     </div>
@@ -398,7 +398,7 @@ export default function AccountPage() {
                   <div style={{ marginTop: '40px' }}>
                     <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '24px' }}>Recommended for your sizes</h2>
                     {matchedProducts.length > 0 ? (
-                      <div className="grid grid-cols-2" style={{ gap: '20px' }}>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {matchedProducts.map((product) => (
                           <ProductCard key={product.id} product={product} />
                         ))}

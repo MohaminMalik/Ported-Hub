@@ -13,6 +13,8 @@ const mockProducts = [
 
 export async function GET(req: Request) {
   try {
+    await prisma.product.deleteMany({});
+    
     for (const product of mockProducts) {
       await prisma.product.create({
         data: product
