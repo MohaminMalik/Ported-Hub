@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import PasswordInput from '@/components/PasswordInput';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -115,11 +116,8 @@ export default function SignUpPage() {
 
           <div>
             <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Password</label>
-            <input 
-              type="password" 
+            <PasswordInput 
               name="password"
-              required
-              minLength={6}
               value={formData.password}
               onChange={handleChange}
               style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit' }} 
@@ -129,11 +127,8 @@ export default function SignUpPage() {
 
           <div>
             <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Confirm Password</label>
-            <input 
-              type="password" 
+            <PasswordInput 
               name="confirmPassword"
-              required
-              minLength={6}
               value={formData.confirmPassword}
               onChange={handleChange}
               style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit' }} 

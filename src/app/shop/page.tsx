@@ -22,7 +22,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   });
 
   return (
-    <div className="container py-12 animate-fade-in" style={{ display: 'flex', gap: '32px' }}>
+    <div className="container py-12 animate-fade-in flex flex-col md:flex-row gap-8">
       <FilterSidebar />
 
       {/* Product Grid */}
@@ -34,7 +34,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
             <p style={{ color: 'var(--text-secondary)', marginTop: '8px' }}>We don't have any products matching these exact filters yet.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

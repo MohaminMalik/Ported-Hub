@@ -4,6 +4,7 @@ import { User, MapPin, Package, Clock, ArrowRight, LogOut, Settings } from 'luci
 import { useRouter } from 'next/navigation';
 import { formatPrice } from '@/utils/formatPrice';
 import ProductCard from '@/components/ProductCard';
+import PasswordInput from '@/components/PasswordInput';
 
 export default function AccountPage() {
   const router = useRouter();
@@ -307,9 +308,9 @@ export default function AccountPage() {
                   
                   {isChangingPassword ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <input type="password" placeholder="Old Password" value={passwordForm.oldPassword} onChange={e => setPasswordForm({...passwordForm, oldPassword: e.target.value})} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
-                      <input type="password" placeholder="New Password" value={passwordForm.newPassword} onChange={e => setPasswordForm({...passwordForm, newPassword: e.target.value})} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
-                      <input type="password" placeholder="Confirm New Password" value={passwordForm.confirmPassword} onChange={e => setPasswordForm({...passwordForm, confirmPassword: e.target.value})} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
+                      <PasswordInput placeholder="Old Password" value={passwordForm.oldPassword} onChange={(e: any) => setPasswordForm({...passwordForm, oldPassword: e.target.value})} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
+                      <PasswordInput placeholder="New Password" value={passwordForm.newPassword} onChange={(e: any) => setPasswordForm({...passwordForm, newPassword: e.target.value})} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
+                      <PasswordInput placeholder="Confirm New Password" value={passwordForm.confirmPassword} onChange={(e: any) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
                       
                       <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                         <button onClick={submitChangePassword} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>Save Password</button>

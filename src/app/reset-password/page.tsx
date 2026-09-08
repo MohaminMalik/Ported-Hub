@@ -2,6 +2,7 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { showToast } from '@/components/Toast';
+import PasswordInput from '@/components/PasswordInput';
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -56,24 +57,18 @@ function ResetPasswordForm() {
       <form onSubmit={handleResetSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <div>
           <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', fontWeight: 600 }}>New Password</label>
-          <input 
-            type="password" 
+          <PasswordInput 
             value={passwords.newPassword}
-            onChange={(e) => setPasswords({...passwords, newPassword: e.target.value})}
-            required
-            minLength={6}
+            onChange={(e: any) => setPasswords({...passwords, newPassword: e.target.value})}
             style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'var(--background)', color: 'var(--foreground)', outline: 'none' }}
           />
         </div>
 
         <div>
           <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', fontWeight: 600 }}>Confirm Password</label>
-          <input 
-            type="password" 
+          <PasswordInput 
             value={passwords.confirmPassword}
-            onChange={(e) => setPasswords({...passwords, confirmPassword: e.target.value})}
-            required
-            minLength={6}
+            onChange={(e: any) => setPasswords({...passwords, confirmPassword: e.target.value})}
             style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'var(--background)', color: 'var(--foreground)', outline: 'none' }}
           />
         </div>
