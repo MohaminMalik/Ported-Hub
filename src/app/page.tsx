@@ -41,7 +41,7 @@ export default function Home() {
             Discover one-of-a-kind, premium vintage pieces handpicked for your unique style. Quality fashion that doesn't cost the earth.
           </p>
           <div className="animate-slide-up delay-3" style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="#categories" className="btn-primary" style={{ padding: '16px 32px', fontSize: '1.1rem' }}>
+            <Link href="/shop" className="btn-primary" style={{ padding: '16px 32px', fontSize: '1.1rem' }}>
               Shop Now <ArrowRight size={20} />
             </Link>
             <Link href="/game" className="btn-primary" style={{ padding: '16px 32px', fontSize: '1.1rem', background: 'var(--surface-color)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
@@ -55,7 +55,7 @@ export default function Home() {
       <section className="container py-12 mt-8 animate-slide-up delay-4">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
           <h2 style={{ fontSize: '2.5rem', fontWeight: 700 }}>Fresh Drops</h2>
-          <Link href="#categories" style={{ color: 'var(--accent-color)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <Link href="/shop" style={{ color: 'var(--accent-color)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
             View All <ArrowRight size={16} />
           </Link>
         </div>

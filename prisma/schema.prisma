@@ -17,6 +17,12 @@ model User {
   lastName  String
   email     String   @unique
   password  String
+  role      String   @default("USER") // USER or ADMIN
+  
+  // Password Reset
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
   createdAt DateTime @default(now())
   
   // Saved Address Details
@@ -45,4 +51,22 @@ model Order {
   trackingUrl     String?
 
   createdAt       DateTime @default(now())
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  category    String
+  size        String?
+  condition   String?
+  material    String?
+  era         String?
+  color       String?
+  brand       String?
+  thriftStory String?
+  images      String[] // Array of image URLs
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

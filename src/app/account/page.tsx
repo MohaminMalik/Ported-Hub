@@ -128,11 +128,9 @@ export default function AccountPage() {
                           <div style={{ fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
                             {items.map((i:any) => i.name).join(', ')}
                           </div>
-                          {order.trackingUrl && (
-                            <a href={order.trackingUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--accent-color)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
-                              Track Order <ArrowRight size={16} />
-                            </a>
-                          )}
+                          <a href="https://www.indiapost.gov.in/" target="_blank" rel="noreferrer" className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Package size={16} /> Track your orders here
+                          </a>
                         </div>
                       </div>
                     );

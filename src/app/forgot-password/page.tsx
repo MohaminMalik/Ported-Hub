@@ -1,49 +1,34 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { showToast } from '@/components/Toast';
 
 export default function ForgotPasswordPage() {
-  const router = useRouter();
-  const [step, setStep] = useState<'request' | 'reset'>('request');
   const [identifier, setIdentifier] = useState('');
-  const [passwords, setPasswords] = useState({ newPassword: '', confirmPassword: '' });
-
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const handleRequestSubmit = (e: React.FormEvent) => {
+  const handleRequestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!identifier.trim()) return;
-    // Simulate sending OTP/Link
-    setStep('reset');
-  };
-
-  const handleResetSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passwords.newPassword !== passwords.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-    
     setLoading(true);
+
     try {
-      const response = await fetch('/api/auth/reset', {
+      const res = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier, newPassword: passwords.newPassword })
+        body: JSON.stringify({ email: identifier })
       });
+      const data = await res.json();
       
-      const data = await response.json();
-      
-      if (!response.ok) {
-        alert(data.error || 'Password reset failed');
-        return;
+      if (!res.ok) {
+        showToast(data.error || 'Failed to send reset link', 'error');
+      } else {
+        showToast('Reset link sent to your email!', 'success');
+        setSuccess(true);
       }
-      
-      alert(data.message);
-      router.push('/signin');
-    } catch (error) {
-      alert('An error occurred. Please try again.');
+    } catch (err) {
+      showToast('Internal Server Error', 'error');
     } finally {
       setLoading(false);
     }
@@ -53,73 +38,51 @@ export default function ForgotPasswordPage() {
     <div className="container py-12 animate-fade-in" style={{ display: 'flex', justifyContent: 'center' }}>
       <div className="card" style={{ width: '100%', maxWidth: '450px', padding: '40px' }}>
         
-        {step === 'request' ? (
+        {!success ? (
           <>
             <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '8px', textAlign: 'center' }}>Reset Password</h1>
             <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '32px' }}>
-              Enter the email address or phone number associated with your account.
+              Enter the email address associated with your account.
             </p>
 
             <form onSubmit={handleRequestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Email Address or Phone Number</label>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', fontWeight: 600 }}>Email Address</label>
                 <input 
-                  type="text" 
-                  required 
-                  value={identifier} 
+                  type="email" 
+                  value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit' }} 
-                  placeholder="john@example.com or 98765 43210" 
+                  required
+                  placeholder="you@example.com"
+                  style={{ width: '100%', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'var(--background)', color: 'var(--foreground)', outline: 'none' }}
                 />
               </div>
 
-              <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '8px', padding: '16px' }}>
-                Continue
+              <button 
+                type="submit" 
+                className="btn-primary" 
+                disabled={loading}
+                style={{ padding: '16px', fontSize: '1rem', marginTop: '8px', opacity: loading ? 0.7 : 1 }}
+              >
+                {loading ? 'Sending link...' : 'Send Reset Link'}
               </button>
             </form>
 
-            <p style={{ textAlign: 'center', marginTop: '24px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-              Remembered your password? <Link href="/signin" style={{ color: 'var(--accent-color)', fontWeight: 600 }}>Sign In</Link>
-            </p>
+            <div style={{ marginTop: '24px', textAlign: 'center' }}>
+              <Link href="/signin" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem' }}>
+                Back to Sign In
+              </Link>
+            </div>
           </>
         ) : (
-          <div className="animate-fade">
-            <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '8px', textAlign: 'center' }}>Create New Password</h1>
-            <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '32px' }}>
-              Enter a new password for <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{identifier}</span>.
+          <div style={{ textAlign: 'center' }}>
+            <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '16px' }}>Check your email</h1>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
+              We have sent a password reset link to your email address. It will expire in 1 hour.
             </p>
-
-            <form onSubmit={handleResetSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>New Password</label>
-                <input 
-                  type="password" 
-                  required 
-                  minLength={6}
-                  value={passwords.newPassword} 
-                  onChange={(e) => setPasswords({...passwords, newPassword: e.target.value})}
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit' }} 
-                  placeholder="••••••••" 
-                />
-              </div>
-              
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Confirm New Password</label>
-                <input 
-                  type="password" 
-                  required 
-                  minLength={6}
-                  value={passwords.confirmPassword} 
-                  onChange={(e) => setPasswords({...passwords, confirmPassword: e.target.value})}
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit' }} 
-                  placeholder="••••••••" 
-                />
-              </div>
-
-              <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', marginTop: '8px', padding: '16px', opacity: loading ? 0.7 : 1 }}>
-                {loading ? 'Resetting...' : 'Reset Password'}
-              </button>
-            </form>
+            <Link href="/signin" className="btn-primary" style={{ display: 'inline-block', width: '100%', padding: '16px', textDecoration: 'none' }}>
+              Back to Sign In
+            </Link>
           </div>
         )}
 
