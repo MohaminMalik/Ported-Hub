@@ -175,9 +175,9 @@ export default function AccountPage() {
         </button>
       </div>
 
-      <div className="grid" style={{ gridTemplateColumns: '250px 1fr', gap: '48px', alignItems: 'start' }}>
+      <div className="flex flex-col md:flex-row gap-8 items-start">
         {/* Sidebar Nav */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div className="w-full md:w-64 flex flex-col gap-2">
           <button 
             onClick={() => setActiveTab('orders')} 
             style={{ textAlign: 'left', padding: '12px 16px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '12px', background: activeTab === 'orders' ? 'rgba(var(--accent-rgb), 0.1)' : 'transparent', color: activeTab === 'orders' ? 'var(--accent-color)' : 'var(--text-primary)', border: 'none', cursor: 'pointer', fontWeight: 500 }}
@@ -220,25 +220,25 @@ export default function AccountPage() {
                     const date = new Date(order.createdAt).toLocaleDateString();
                     return (
                       <div key={order.id} style={{ padding: '20px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px', marginBottom: '16px' }}>
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-[var(--border-color)] pb-4 mb-4 gap-4">
                           <div>
                             <div style={{ fontWeight: 600, fontSize: '1.1rem' }}>Order #{order.id}</div>
                             <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Placed on {date}</div>
                           </div>
-                          <div style={{ textAlign: 'right' }}>
+                          <div className="text-left md:text-right">
                             <div style={{ fontWeight: 700 }}>{formatPrice(order.totalAmount)}</div>
                             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 600, color: order.status === 'Delivered' ? '#00B894' : 'var(--accent-color)', background: order.status === 'Delivered' ? 'rgba(0,184,148,0.1)' : 'rgba(var(--accent-rgb), 0.1)', padding: '4px 10px', borderRadius: '20px', marginTop: '4px' }}>
                               {order.status === 'In Transit' ? <Clock size={14} /> : <Package size={14} />} {order.status}
                             </div>
                           </div>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                           <div style={{ fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
                             {items.map((i:any) => i.name).join(', ')}
                           </div>
                           {order.status !== 'Delivered' && (
-                            <a href="https://www.indiapost.gov.in/" target="_blank" rel="noreferrer" className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              <Package size={16} /> Track your order
+                            <a href="https://www.indiapost.gov.in/" target="_blank" rel="noreferrer" className="btn-primary w-full md:w-auto justify-center" style={{ padding: '10px 20px', fontSize: '0.9rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <Package size={18} /> Track your order
                             </a>
                           )}
                         </div>
