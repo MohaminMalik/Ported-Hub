@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { formatPrice } from '@/utils/formatPrice';
-import { ArrowLeft, Trash2, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Trash2, ShieldCheck, X } from 'lucide-react';
 import { showToast } from '@/components/Toast';
 
 export default function CartPage() {
@@ -151,7 +151,11 @@ export default function CartPage() {
     }
   };
 
-  const handleRazorpayMock = async () => {
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [utrNumber, setUtrNumber] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleCheckoutClick = () => {
     if (total === 0) {
       showToast('Your cart is empty!', 'error');
       return;
@@ -174,76 +178,43 @@ export default function CartPage() {
       return;
     }
 
-    showToast('Initializing secure checkout...', 'info');
-    const inrAmount = Math.round(total);
+    // Show the QR code payment modal
+    setShowQRModal(true);
+  };
+
+  const confirmQRPayment = async () => {
+    if (!utrNumber.trim() || utrNumber.length < 12) {
+      showToast('Please enter a valid 12-digit UTR/Transaction ID', 'error');
+      return;
+    }
+
+    setIsProcessing(true);
+    showToast('Verifying payment and placing order...', 'info');
+    
+    const orderId = `ORD_${Date.now()}`;
     
     try {
-      const res = await fetch('/api/razorpay', {
+      await fetch('/api/order/confirm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: inrAmount, shippingDetails, cartItems, phoneNumber })
+        body: JSON.stringify({
+          shippingDetails,
+          cartItems,
+          total,
+          paymentId: `UPI_${utrNumber}`,
+          orderId: orderId,
+          phoneNumber
+        })
       });
-      const data = await res.json();
 
-      if (!res.ok) {
-        showToast(data.error || 'Failed to initialize payment gateway', 'error');
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => {
-        const options = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '', // Fallback for dev without env
-          amount: data.amount,
-          currency: data.currency,
-          name: "Ported Hub",
-          description: "Premium Vintage Collection",
-          order_id: data.id,
-          handler: async function (response: any) {
-            showToast('Payment successful! Processing order...', 'success');
-            
-            try {
-              await fetch('/api/order/confirm', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  shippingDetails,
-                  cartItems,
-                  total,
-                  paymentId: response.razorpay_payment_id,
-                  orderId: data.id
-                })
-              });
-            } catch (e) {
-              console.error("Failed to send confirmation email", e);
-            }
-
-            localStorage.setItem('cart', JSON.stringify([]));
-            window.dispatchEvent(new Event('cartUpdated'));
-            router.push('/success');
-          },
-          prefill: {
-            name: `${firstName} ${lastName}`,
-            email: email,
-            contact: phoneNumber
-          },
-          theme: {
-            color: "#6C5CE7"
-          }
-        };
-
-        const rzp = new (window as any).Razorpay(options);
-        rzp.on('payment.failed', function (response: any) {
-          showToast(`Payment failed: ${response.error.description}`, 'error');
-        });
-        rzp.open();
-      };
-      script.onerror = () => showToast('Failed to load Razorpay SDK', 'error');
-      document.body.appendChild(script);
-
-    } catch (err) {
-      showToast('Network error connecting to payment server.', 'error');
+      showToast('Payment successful! Processing order...', 'success');
+      localStorage.setItem('cart', JSON.stringify([]));
+      window.dispatchEvent(new Event('cartUpdated'));
+      router.push('/success');
+    } catch (e) {
+      console.error("Failed to send confirmation email", e);
+      showToast('Error placing order, please try again.', 'error');
+      setIsProcessing(false);
     }
   };
 
@@ -411,18 +382,50 @@ export default function CartPage() {
             <div style={{ marginBottom: '24px', padding: '16px', background: 'rgba(var(--accent-rgb), 0.05)', border: '1px solid var(--accent-color)', borderRadius: '12px', display: 'flex', gap: '12px', alignItems: 'center' }}>
               <ShieldCheck size={24} color="var(--accent-color)" />
               <div>
-                <h4 style={{ fontWeight: 600, fontSize: '0.95rem' }}>Secure Checkout via Razorpay</h4>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>UPI, Cards, NetBanking, Wallets supported.</p>
+                <h4 style={{ fontWeight: 600, fontSize: '0.95rem' }}>Secure Manual UPI Checkout</h4>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Scan QR code and enter Transaction ID.</p>
               </div>
             </div>
 
-            <button onClick={handleRazorpayMock} className="btn-primary" style={{ width: '100%', padding: '20px', fontSize: '1.2rem', background: 'var(--accent-color)', display: 'flex', flexDirection: 'column', gap: '4px', height: 'auto' }}>
+            <button onClick={handleCheckoutClick} className="btn-primary" style={{ width: '100%', padding: '20px', fontSize: '1.2rem', background: 'var(--accent-color)', display: 'flex', flexDirection: 'column', gap: '4px', height: 'auto' }}>
               <span>Pay {formatPrice(total)}</span>
-              <span style={{ fontSize: '0.8rem', opacity: 0.8, fontWeight: 400 }}>Powered by Razorpay</span>
+              <span style={{ fontSize: '0.8rem', opacity: 0.8, fontWeight: 400 }}>via UPI / QR Code</span>
             </button>
           </div>
         </div>
       </div>
+
+      {showQRModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+          <div className="card" style={{ width: '100%', maxWidth: '400px', padding: '32px', textAlign: 'center', position: 'relative' }}>
+            <button onClick={() => setShowQRModal(false)} style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+              <X size={24} />
+            </button>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px' }}>Complete Payment</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>Scan this QR code using any UPI app to pay {formatPrice(total)}.</p>
+            
+            <div style={{ width: '200px', height: '200px', background: 'white', margin: '0 auto 24px', borderRadius: '12px', padding: '16px', border: '1px solid #ddd' }}>
+              {/* Replace src with the actual QR code image */}
+              <img src="/images/shoes/qr.jpeg" alt="UPI QR Code" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:black;font-weight:bold;">[Your QR Code Here]</div>'; }} />
+            </div>
+
+            <div style={{ textAlign: 'left', marginBottom: '24px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>12-Digit UTR / Transaction ID *</label>
+              <input 
+                type="text" 
+                value={utrNumber} 
+                onChange={(e) => setUtrNumber(e.target.value)} 
+                placeholder="e.g. 312345678901" 
+                style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)', outline: 'none', fontFamily: 'inherit' }} 
+              />
+            </div>
+
+            <button onClick={confirmQRPayment} disabled={isProcessing} className="btn-primary" style={{ width: '100%', padding: '16px', fontSize: '1.1rem', opacity: isProcessing ? 0.7 : 1 }}>
+              {isProcessing ? 'Verifying...' : 'I have completed the payment'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
