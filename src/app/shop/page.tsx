@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { prisma } from '@/utils/prisma';
 import ProductCard from '@/components/ProductCard';
 import Link from 'next/link';
@@ -6,10 +7,14 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const params = await searchParams;
   const category = params.category as string | undefined;
   const size = params.size as string | undefined;
+  const color = params.color as string | undefined;
+  const material = params.material as string | undefined;
   
   const where: any = {};
   if (category) where.category = category;
-  if (size) where.size = size;
+  if (size) where.size = { contains: size, mode: 'insensitive' };
+  if (color) where.color = { contains: color, mode: 'insensitive' };
+  if (material) where.material = { contains: material, mode: 'insensitive' };
 
   const products = await prisma.product.findMany({
     where,
@@ -35,13 +40,28 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
         <div style={{ marginBottom: '24px' }}>
           <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '12px' }}>Size</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <Link href={category ? `/shop?category=${category}&size=S` : '/shop?size=S'} style={{ color: size === 'S' ? 'var(--accent-color)' : 'var(--text-secondary)', textDecoration: 'none' }}>Small</Link>
-            <Link href={category ? `/shop?category=${category}&size=M` : '/shop?size=M'} style={{ color: size === 'M' ? 'var(--accent-color)' : 'var(--text-secondary)', textDecoration: 'none' }}>Medium</Link>
-            <Link href={category ? `/shop?category=${category}&size=L` : '/shop?size=L'} style={{ color: size === 'L' ? 'var(--accent-color)' : 'var(--text-secondary)', textDecoration: 'none' }}>Large</Link>
+            <Link href={`/shop?${new URLSearchParams({ ...(category ? {category} : {}), ...(color ? {color} : {}), ...(material ? {material} : {}), size: 'EU 40' })}`} style={{ color: size?.includes('40') ? 'var(--accent-color)' : 'var(--text-secondary)', textDecoration: 'none' }}>EU 40 / UK 7</Link>
+            <Link href={`/shop?${new URLSearchParams({ ...(category ? {category} : {}), ...(color ? {color} : {}), ...(material ? {material} : {}), size: 'EU 41' })}`} style={{ color: size?.includes('41') ? 'var(--accent-color)' : 'var(--text-secondary)', textDecoration: 'none' }}>EU 41 / UK 8</Link>
+            <Link href={`/shop?${new URLSearchParams({ ...(category ? {category} : {}), ...(color ? {color} : {}), ...(material ? {material} : {}), size: 'L' })}`} style={{ color: size === 'L' ? 'var(--accent-color)' : 'var(--text-secondary)', textDecoration: 'none' }}>Large</Link>
           </div>
         </div>
-        
-        {/* Additional Filters can be added here easily */}
+
+        <div style={{ marginBottom: '24px' }}>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '12px' }}>Color</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <Link href={`/shop?${new URLSearchParams({ ...(category ? {category} : {}), ...(size ? {size} : {}), ...(material ? {material} : {}), color: 'brown' })}`} style={{ color: color === 'brown' ? 'var(--accent-color)' : 'var(--text-secondary)', textDecoration: 'none' }}>Brown</Link>
+            <Link href={`/shop?${new URLSearchParams({ ...(category ? {category} : {}), ...(size ? {size} : {}), ...(material ? {material} : {}), color: 'black' })}`} style={{ color: color === 'black' ? 'var(--accent-color)' : 'var(--text-secondary)', textDecoration: 'none' }}>Black</Link>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '24px' }}>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '12px' }}>Material</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <Link href={`/shop?${new URLSearchParams({ ...(category ? {category} : {}), ...(size ? {size} : {}), ...(color ? {color} : {}), material: 'leather' })}`} style={{ color: material === 'leather' ? 'var(--accent-color)' : 'var(--text-secondary)', textDecoration: 'none' }}>Leather</Link>
+            <Link href={`/shop?${new URLSearchParams({ ...(category ? {category} : {}), ...(size ? {size} : {}), ...(color ? {color} : {}), material: 'suede' })}`} style={{ color: material === 'suede' ? 'var(--accent-color)' : 'var(--text-secondary)', textDecoration: 'none' }}>Suede</Link>
+            <Link href={`/shop?${new URLSearchParams({ ...(category ? {category} : {}), ...(size ? {size} : {}), ...(color ? {color} : {}), material: 'corduroy' })}`} style={{ color: material === 'corduroy' ? 'var(--accent-color)' : 'var(--text-secondary)', textDecoration: 'none' }}>Corduroy</Link>
+          </div>
+        </div>
       </div>
 
       {/* Product Grid */}

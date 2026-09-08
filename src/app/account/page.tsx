@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react';
 import { User, MapPin, Package, Clock, ArrowRight, LogOut, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatPrice } from '@/utils/formatPrice';
+import ProductCard from '@/components/ProductCard';
 
 export default function AccountPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('orders');
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [matchedProducts, setMatchedProducts] = useState<any[]>([]);
   
   // Edit Address State
   const [isEditingAddress, setIsEditingAddress] = useState(false);
@@ -48,6 +50,32 @@ export default function AccountPage() {
         router.push('/signin');
       });
   }, [router]);
+
+  useEffect(() => {
+    if (!userData) return;
+    const fetchMatched = async () => {
+      try {
+        const queryParams = new URLSearchParams();
+        if (userData.shirtSize) queryParams.append('size', userData.shirtSize);
+        if (userData.waistSize) queryParams.append('size', userData.waistSize);
+        if (userData.shoeSize) queryParams.append('size', userData.shoeSize);
+        
+        if (!queryParams.toString()) {
+          setMatchedProducts([]);
+          return;
+        }
+        
+        const res = await fetch(`/api/products?${queryParams.toString()}`);
+        if (res.ok) {
+          const data = await res.json();
+          setMatchedProducts(data);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchMatched();
+  }, [userData]);
 
   const handleSignOut = () => {
     document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -287,20 +315,37 @@ export default function AccountPage() {
                   </div>
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px' }}>
-                  <div style={{ padding: '24px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
-                    <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Shirt / Tops Size</p>
-                    <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.shirtSize || 'Not specified'}</h3>
+                <>
+                  <div style={{ display: 'flex', gap: '16px' }}>
+                    <div style={{ flex: 1, padding: '24px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
+                      <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Shirt / Tops Size</p>
+                      <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.shirtSize || 'Not specified'}</h3>
+                    </div>
+                    <div style={{ flex: 1, padding: '24px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
+                      <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Pants Waist Size</p>
+                      <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.waistSize || 'Not specified'}</h3>
+                    </div>
+                    <div style={{ flex: 1, padding: '24px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
+                      <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Shoe Size</p>
+                      <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.shoeSize || 'Not specified'}</h3>
+                    </div>
                   </div>
-                  <div style={{ padding: '24px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
-                    <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Pants Waist Size</p>
-                    <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.waistSize || 'Not specified'}</h3>
+
+                  <div style={{ marginTop: '40px' }}>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '24px' }}>Recommended for your sizes</h2>
+                    {matchedProducts.length > 0 ? (
+                      <div className="grid grid-cols-2" style={{ gap: '20px' }}>
+                        {matchedProducts.map((product) => (
+                          <ProductCard key={product.id} product={product} />
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ padding: '40px', textAlign: 'center', background: 'var(--surface-hover)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                        <p style={{ color: 'var(--text-secondary)' }}>We couldn't find any products in your exact sizes right now.</p>
+                      </div>
+                    )}
                   </div>
-                  <div style={{ padding: '24px', border: '1px solid var(--border-color)', borderRadius: '12px', background: 'var(--surface-hover)' }}>
-                    <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Shoe Size</p>
-                    <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.shoeSize || 'Not specified'}</h3>
-                  </div>
-                </div>
+                </>
               )}
             </div>
           )}

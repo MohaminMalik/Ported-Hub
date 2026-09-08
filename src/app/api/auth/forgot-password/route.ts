@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     });
 
     // Determine the base URL (Vercel or localhost)
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = req.headers.get('origin') || process.env.NEXT_PUBLIC_BASE_URL || 'https://ported-hub.vercel.app';
     const resetLink = `${baseUrl}/reset-password?token=${resetToken}`;
 
     const mailOptions = {
