@@ -50,7 +50,7 @@ export default function ProductCard({ product }: { product: any }) {
 
   return (
     <div className="card" onClick={handleCardClick} style={{ display: 'flex', flexDirection: 'column', height: '100%', cursor: 'pointer' }}>
-      <div className="relative aspect-[3/4] bg-[var(--surface-hover)]">
+      <div className="relative aspect-square bg-[var(--surface-hover)]">
         <div style={{ width: '100%', height: '100%', background: product.images[currentSlide], transition: 'background 0.3s ease' }}></div>
         
         {product.images.length > 1 && (
