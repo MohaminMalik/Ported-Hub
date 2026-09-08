@@ -183,8 +183,9 @@ export default function CartPage() {
   };
 
   const confirmQRPayment = async () => {
-    if (!utrNumber.trim() || utrNumber.length < 12) {
-      showToast('Please enter a valid 12-digit UTR/Transaction ID', 'error');
+    // UPI UTRs are exactly 12 numeric digits
+    if (!/^\d{12}$/.test(utrNumber.trim())) {
+      showToast('Please enter a valid 12-digit numeric UTR/Transaction ID', 'error');
       return;
     }
 
