@@ -80,26 +80,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Curated Lookbooks */}
-      <section className="container py-12 animate-slide-up">
-        <h2 className="mb-8" style={{ fontSize: '2.5rem', fontWeight: 700, textAlign: 'center' }}>Curated Vibes</h2>
-        <div className="grid grid-cols-3">
-          {[
-            { title: "90s Grunge", subtitle: "Flannels, Denim, Boots", img: "linear-gradient(135deg, #1e272e, #485460)" },
-            { title: "Y2K Streetwear", subtitle: "Baggy fits & Graphics", img: "linear-gradient(135deg, #0A84FF, #5E5CE6)" },
-            { title: "Classic Americana", subtitle: "Workwear & Leathers", img: "linear-gradient(135deg, #8B4513, #D2691E)" }
-          ].map((lookbook, idx) => (
-            <div key={idx} className="card" style={{ position: 'relative', height: '300px', display: 'flex', alignItems: 'flex-end', padding: '24px', background: lookbook.img }}>
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)' }}></div>
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'white' }}>{lookbook.title}</h3>
-                <p style={{ color: 'rgba(255,255,255,0.8)' }}>{lookbook.subtitle}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Categories Section */}
       <section id="categories" className="container py-12 animate-slide-up">
         <h2 className="mb-8" style={{ fontSize: '2.5rem', fontWeight: 700, textAlign: 'center' }}>Explore Categories</h2>
