@@ -12,16 +12,17 @@ export default function TrackOrderPage() {
           <strong>Note:</strong> Just placed an order? Your official Tracking ID will be sent to your registered email and phone number shortly.
         </div>
         
-        <div className="card mb-12" style={{ padding: '32px' }}>
-          <div style={{ display: 'flex', gap: '16px' }}>
+        <div className="card mb-12" style={{ padding: '24px md:32px' }}>
+          <div className="flex flex-col sm:flex-row gap-4">
             <input 
               type="text" 
               placeholder="e.g. ORD-987654321" 
-              style={{ flex: 1, padding: '16px 24px', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'var(--bg-color)', color: 'var(--text-primary)', outline: 'none', fontSize: '1.1rem' }} 
+              className="w-full"
+              style={{ padding: '16px 24px', borderRadius: '12px', border: '1px solid var(--border-color)', background: 'var(--bg-color)', color: 'var(--text-primary)', outline: 'none', fontSize: '1.1rem' }} 
             />
-            <button className="btn-primary" style={{ padding: '0 32px', fontSize: '1.1rem', borderRadius: '12px' }}>
+            <a href="https://www.indiapost.gov.in/" target="_blank" rel="noreferrer" className="btn-primary w-full sm:w-auto text-center flex justify-center items-center" style={{ padding: '16px 32px', fontSize: '1.1rem', borderRadius: '12px' }}>
               Track
-            </button>
+            </a>
           </div>
         </div>
         

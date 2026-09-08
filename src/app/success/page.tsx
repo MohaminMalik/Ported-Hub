@@ -14,11 +14,11 @@ export default function SuccessPage() {
         Thank you for your order. We've received your payment and are securely packing your premium vintage pieces. <strong style={{ color: 'var(--text-primary)' }}>Your official Tracking ID will be sent to your registered email and phone number shortly.</strong>
       </p>
       
-      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <Link href="/track" className="btn-primary" style={{ padding: '16px 32px', fontSize: '1.1rem', background: 'var(--surface-color)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div className="flex flex-col sm:flex-row gap-4 w-full justify-center px-4">
+        <a href="https://www.indiapost.gov.in/" target="_blank" rel="noreferrer" className="btn-primary w-full sm:w-auto justify-center" style={{ padding: '16px 32px', fontSize: '1.1rem', background: 'var(--surface-color)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Package size={20} /> Track Order
-        </Link>
-        <Link href="/" className="btn-primary" style={{ padding: '16px 32px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        </a>
+        <Link href="/" className="btn-primary w-full sm:w-auto justify-center" style={{ padding: '16px 32px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
           Continue Shopping <ArrowRight size={20} />
         </Link>
       </div>
