@@ -13,7 +13,7 @@ const searchableItems = [
   { name: 'Washed Graphic Tee', type: 'Product', link: '/product/5', image: 'linear-gradient(135deg, #FD79A8, #FAB1A0)' },
   { name: 'Retro Windbreaker', type: 'Product', link: '/product/6', image: 'linear-gradient(135deg, #00B894, #55EFC4)' },
   { name: 'Varsity Jacket', type: 'Product', link: '/product/7', image: 'linear-gradient(135deg, #E17055, #FFEAA7)' },
-  { name: 'BZara High Top Suede Sneakers ', type: 'Product', link: '/product/8', image: "url('/images/shoes/zara1.jpeg') center/cover" },
+  { name: 'Zara High Top Suede Sneakers ', type: 'Product', link: '/product/8', image: "url('/images/shoes/zara1.jpeg') center/cover" },
   { name: 'Canvas Tote', type: 'Product', link: '/product/9', image: 'linear-gradient(135deg, #FD79A8, #FAB1A0)' },
   { name: 'Dickies Suede Vintage Chelsea ', type: 'Product', link: '/product/10', image: "url('/images/shoes/diki1.jpeg') center/cover" },
   { name: 'Knit Cardigan', type: 'Product', link: '/product/11', image: 'linear-gradient(135deg, #FF6B6B, #FF8E8B)' },
