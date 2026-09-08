@@ -18,8 +18,8 @@ export default function CartPage() {
     } else {
       // Fallback if empty to show design
       setCartItems([
-        { id: 1, cartId: 1, name: 'Vintage Flannel Shirt', size: 'L', price: 25.00, image: 'linear-gradient(135deg, #FF6B6B, #FF8E8B)' },
-        { id: 10, cartId: 2, name: 'Chunky Sneakers', size: 'US 10', price: 60.00, image: "url('/images/shoes/diki1.jpeg') center/cover" },
+        { id: 1, cartId: 1, name: 'Dolce & Gabbana Vintage Leather Boots', size: 'UK 7', price: 2999, image: "url('/images/shoes/dg1.jpeg') center/cover" },
+        { id: 10, cartId: 2, name: 'Dickies Suede Vintage Chelsea ', size: 'UK 8', price: 1299, image: "url('/images/shoes/diki1.jpeg') center/cover" },
       ]);
     }
   }, []);
