@@ -7,17 +7,8 @@ import { useRouter } from 'next/navigation';
 
 const searchableItems = [
   { name: 'Dolce & Gabbana Vintage Leather Boots', type: 'Product', link: '/product/1', image: "url('/images/shoes/dg1.jpeg') center/cover" },
-  { name: 'Denim Button-up', type: 'Product', link: '/product/2', image: 'linear-gradient(135deg, #0984E3, #74B9FF)' },
-  { name: 'Silk Patterned Shirt', type: 'Product', link: '/product/3', image: 'linear-gradient(135deg, #6C5CE7, #A29BFE)' },
-  { name: 'Retro Band Tee', type: 'Product', link: '/product/4', image: 'linear-gradient(135deg, #2D3436, #636E72)' },
-  { name: 'Washed Graphic Tee', type: 'Product', link: '/product/5', image: 'linear-gradient(135deg, #FD79A8, #FAB1A0)' },
-  { name: 'Retro Windbreaker', type: 'Product', link: '/product/6', image: 'linear-gradient(135deg, #00B894, #55EFC4)' },
-  { name: 'Varsity Jacket', type: 'Product', link: '/product/7', image: 'linear-gradient(135deg, #E17055, #FFEAA7)' },
   { name: 'Zara High Top Suede Sneakers ', type: 'Product', link: '/product/8', image: "url('/images/shoes/zara1.jpeg') center/cover" },
-  { name: 'Canvas Tote', type: 'Product', link: '/product/9', image: 'linear-gradient(135deg, #FD79A8, #FAB1A0)' },
   { name: 'Dickies Suede Vintage Chelsea ', type: 'Product', link: '/product/10', image: "url('/images/shoes/diki1.jpeg') center/cover" },
-  { name: 'Knit Cardigan', type: 'Product', link: '/product/11', image: 'linear-gradient(135deg, #FF6B6B, #FF8E8B)' },
-  { name: 'Faded Zip Hoodie', type: 'Product', link: '/product/12', image: 'linear-gradient(135deg, #00B894, #55EFC4)' },
   { name: 'Redskins Leather Sneakers', type: 'Product', link: '/product/13', image: "url('/images/shoes/reds1.jpeg') center/cover" },
   { name: 'Ralph Lauren High Top Corduroy Sneakers', type: 'Product', link: '/product/14', image: "url('/images/shoes/rl1.jpeg') center/cover" },
   { name: 'Shirts', type: 'Category', link: '/category/shirts', image: 'linear-gradient(135deg, #FF6B6B, #FF8E8B)' },
