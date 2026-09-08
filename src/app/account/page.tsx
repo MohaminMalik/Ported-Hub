@@ -23,6 +23,11 @@ export default function AccountPage() {
     shirtSize: '', waistSize: '', shoeSize: ''
   });
 
+  const [passwordForm, setPasswordForm] = useState({
+    oldPassword: '', newPassword: '', confirmPassword: ''
+  });
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
   useEffect(() => {
     fetch('/api/user/profile')
       .then(res => {
@@ -130,6 +135,31 @@ export default function AccountPage() {
       }
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const submitChangePassword = async () => {
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      alert('New passwords do not match');
+      return;
+    }
+    try {
+      const res = await fetch('/api/user/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(passwordForm)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.message);
+        setIsChangingPassword(false);
+        setPasswordForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
+      } else {
+        alert(data.error || 'Failed to update password');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Internal error');
     }
   };
 
@@ -274,10 +304,34 @@ export default function AccountPage() {
                 
                 <div style={{ marginTop: '24px', borderTop: '1px solid var(--border-color)', paddingTop: '24px' }}>
                   <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '8px' }}>Security</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '16px' }}>We will send a secure password reset link to your email address.</p>
-                  <button onClick={handleChangePassword} className="btn-primary" style={{ padding: '10px 20px', background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
-                    Change Password
-                  </button>
+                  
+                  {isChangingPassword ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <input type="password" placeholder="Old Password" value={passwordForm.oldPassword} onChange={e => setPasswordForm({...passwordForm, oldPassword: e.target.value})} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
+                      <input type="password" placeholder="New Password" value={passwordForm.newPassword} onChange={e => setPasswordForm({...passwordForm, newPassword: e.target.value})} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
+                      <input type="password" placeholder="Confirm New Password" value={passwordForm.confirmPassword} onChange={e => setPasswordForm({...passwordForm, confirmPassword: e.target.value})} style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
+                      
+                      <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                        <button onClick={submitChangePassword} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>Save Password</button>
+                        <button onClick={() => setIsChangingPassword(false)} style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', cursor: 'pointer', fontSize: '0.9rem' }}>Cancel</button>
+                      </div>
+                      <button onClick={handleChangePassword} style={{ textAlign: 'left', background: 'none', border: 'none', color: 'var(--accent-color)', textDecoration: 'underline', marginTop: '8px', cursor: 'pointer', fontSize: '0.85rem' }}>
+                        Forgot Password?
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '16px' }}>Update your password or request a reset link to your email.</p>
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <button onClick={() => setIsChangingPassword(true)} className="btn-primary" style={{ padding: '10px 20px', background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}>
+                          Change Password
+                        </button>
+                        <button onClick={handleChangePassword} className="btn-primary" style={{ padding: '10px 20px', background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--accent-color)' }}>
+                          Email Reset Link
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -299,15 +353,24 @@ export default function AccountPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '400px' }}>
                   <div>
                     <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Shirt / Tops Size</label>
-                    <input placeholder="e.g. M, L, XL" value={sizeForm.shirtSize} onChange={e => setSizeForm({...sizeForm, shirtSize: e.target.value})} style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
+                    <select value={sizeForm.shirtSize} onChange={e => setSizeForm({...sizeForm, shirtSize: e.target.value})} style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }}>
+                      <option value="">Select Size</option>
+                      {['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXl', '4XL', '5XL'].map(sz => <option key={sz} value={sz}>{sz}</option>)}
+                    </select>
                   </div>
                   <div>
                     <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Pants / Lowers Waist Size</label>
-                    <input placeholder="e.g. 32, 34" value={sizeForm.waistSize} onChange={e => setSizeForm({...sizeForm, waistSize: e.target.value})} style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
+                    <select value={sizeForm.waistSize} onChange={e => setSizeForm({...sizeForm, waistSize: e.target.value})} style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }}>
+                      <option value="">Select Size</option>
+                      {Array.from({length: 20}, (_, i) => i + 26).map(sz => <option key={sz} value={sz.toString()}>{sz}</option>)}
+                    </select>
                   </div>
                   <div>
                     <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Shoe Size</label>
-                    <input placeholder="e.g. EU 41 / UK 8" value={sizeForm.shoeSize} onChange={e => setSizeForm({...sizeForm, shoeSize: e.target.value})} style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }} />
+                    <select value={sizeForm.shoeSize} onChange={e => setSizeForm({...sizeForm, shoeSize: e.target.value})} style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--surface-hover)', color: 'var(--text-primary)' }}>
+                      <option value="">Select Size</option>
+                      {Array.from({length: 15}, (_, i) => i + 35).map(sz => <option key={sz} value={`EU ${sz}`}>EU {sz} / UK {sz - 33}</option>)}
+                    </select>
                   </div>
                   <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                     <button onClick={handleSaveSizes} className="btn-primary">Save Sizes</button>

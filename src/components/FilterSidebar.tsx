@@ -1,0 +1,70 @@
+'use client';
+
+import { useRouter, useSearchParams } from 'next/navigation';
+
+export default function FilterSidebar() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const category = searchParams.get('category') || '';
+  const size = searchParams.get('size') || '';
+  const color = searchParams.get('color') || '';
+  const material = searchParams.get('material') || '';
+
+  const updateFilter = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    router.push(`/shop?${params.toString()}`);
+  };
+
+  return (
+    <div style={{ width: '250px', flexShrink: 0 }}>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '24px' }}>Filters</h2>
+      
+      <div style={{ marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '12px' }}>Category</h3>
+        <select value={category} onChange={(e) => updateFilter('category', e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-color)', color: 'var(--text-primary)' }}>
+          <option value="">All Categories</option>
+          <option value="shoes">Shoes</option>
+          <option value="shirts">Shirts</option>
+          <option value="jackets">Jackets</option>
+        </select>
+      </div>
+
+      <div style={{ marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '12px' }}>Size</h3>
+        <select value={size} onChange={(e) => updateFilter('size', e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-color)', color: 'var(--text-primary)' }}>
+          <option value="">All Sizes</option>
+          <option value="EU 40">EU 40 / UK 7</option>
+          <option value="EU 41">EU 41 / UK 8</option>
+          <option value="S">Small</option>
+          <option value="M">Medium</option>
+          <option value="L">Large</option>
+        </select>
+      </div>
+
+      <div style={{ marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '12px' }}>Color</h3>
+        <select value={color} onChange={(e) => updateFilter('color', e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-color)', color: 'var(--text-primary)' }}>
+          <option value="">All Colors</option>
+          <option value="brown">Brown</option>
+          <option value="black">Black</option>
+        </select>
+      </div>
+
+      <div style={{ marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '12px' }}>Material</h3>
+        <select value={material} onChange={(e) => updateFilter('material', e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--surface-color)', color: 'var(--text-primary)' }}>
+          <option value="">All Materials</option>
+          <option value="leather">Leather</option>
+          <option value="suede">Suede</option>
+          <option value="corduroy">Corduroy</option>
+        </select>
+      </div>
+    </div>
+  );
+}

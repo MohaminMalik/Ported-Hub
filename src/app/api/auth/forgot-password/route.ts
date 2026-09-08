@@ -45,6 +45,9 @@ export async function POST(req: Request) {
         <p>You requested a password reset for your Ported Hub account.</p>
         <p>Click the link below to set a new password. This link expires in 1 hour.</p>
         <a href="${resetLink}" style="display:inline-block;padding:10px 20px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:5px;">Reset Password</a>
+        <p>If the button doesn't work, copy and paste this link into your browser:</p>
+        <p>${resetLink}</p>
+        <br/>
         <p>If you did not request this, please ignore this email.</p>
       `
     };
