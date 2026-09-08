@@ -6,7 +6,7 @@ import { ShoppingBag, Gamepad2, User, Search, X, Moon, Sun, LogIn, UserPlus, Log
 import { useRouter } from 'next/navigation';
 
 const searchableItems = [
-  { name: 'Vintage Flannel Shirt', type: 'Product', link: '/product/1', image: 'linear-gradient(135deg, #FF6B6B, #FF8E8B)' },
+  { name: 'Dolce & Gabbana Vintage Leather Boots', type: 'Product', link: '/product/1', image: "url('/images/shoes/dg1.jpeg') center/cover" },
   { name: 'Denim Button-up', type: 'Product', link: '/product/2', image: 'linear-gradient(135deg, #0984E3, #74B9FF)' },
   { name: 'Silk Patterned Shirt', type: 'Product', link: '/product/3', image: 'linear-gradient(135deg, #6C5CE7, #A29BFE)' },
   { name: 'Retro Band Tee', type: 'Product', link: '/product/4', image: 'linear-gradient(135deg, #2D3436, #636E72)' },

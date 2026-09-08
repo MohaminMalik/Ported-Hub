@@ -38,7 +38,7 @@ export default function ProductCard({ product }: { product: any }) {
     
     // Parse price to float to avoid string concatenation issues in cart total
     const parsedPrice = typeof product.price === 'string' ? parseFloat(product.price) : product.price;
-    const newProduct = { ...product, price: parsedPrice, size: 'L', cartId: Date.now() }; // Mock size for now
+    const newProduct = { ...product, price: parsedPrice, size: 'L', cartId: Date.now(), image: product.images[0] }; // Mock size for now
     currentCart.push(newProduct);
     localStorage.setItem('cart', JSON.stringify(currentCart));
     

@@ -270,7 +270,7 @@ export default function CartPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 {cartItems.map((item) => (
                   <div key={item.id} style={{ display: 'flex', gap: '20px', alignItems: 'center', paddingBottom: '24px', borderBottom: '1px solid var(--border-color)' }}>
-                    <div style={{ width: '80px', height: '80px', borderRadius: '12px', background: item.image }}></div>
+                    <div style={{ width: '80px', height: '80px', borderRadius: '12px', background: item.image || (item.images && item.images[0]) || 'var(--surface-hover)' }}></div>
                     <div style={{ flex: 1 }}>
                       <h4 style={{ fontWeight: 600, fontSize: '1.1rem' }}>{item.name}</h4>
                       <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '8px' }}>Size: {item.size}</p>

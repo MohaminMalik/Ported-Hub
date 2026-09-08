@@ -111,10 +111,10 @@ export default function DinoGame() {
       ctx.fillText(playerEmoji, 0, playerYOffset);
       ctx.restore();
       
-      // Dynamic difficulty based on score - Hard but fair
-      const gameSpeed = 7.5 + (currentScore * 0.05);
-      const obstacleSpawnRate = Math.max(45, 95 - Math.floor(currentScore * 0.5));
-      const collectibleSpawnRate = Math.max(70, 130 - Math.floor(currentScore * 0.5));
+      // Dynamic difficulty based on score - Harder for smartphone
+      const gameSpeed = 10 + (currentScore * 0.1);
+      const obstacleSpawnRate = Math.max(35, 80 - Math.floor(currentScore * 0.7));
+      const collectibleSpawnRate = Math.max(50, 110 - Math.floor(currentScore * 0.6));
       
       // Spawning
       if (frame % obstacleSpawnRate === 0) {
