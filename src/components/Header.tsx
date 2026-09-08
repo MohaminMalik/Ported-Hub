@@ -19,6 +19,7 @@ const searchableItems = [
   { name: 'Knit Cardigan', type: 'Product', link: '/product/11', image: 'linear-gradient(135deg, #FF6B6B, #FF8E8B)' },
   { name: 'Faded Zip Hoodie', type: 'Product', link: '/product/12', image: 'linear-gradient(135deg, #00B894, #55EFC4)' },
   { name: 'Redskins Leather Sneakers', type: 'Product', link: '/product/13', image: "url('/images/shoes/reds1.jpeg') center/cover" },
+  { name: 'Ralph Lauren High Top Corduroy Sneakers', type: 'Product', link: '/product/14', image: "url('/images/shoes/rl1.jpeg') center/cover" },
   { name: 'Shirts', type: 'Category', link: '/category/shirts', image: 'linear-gradient(135deg, #FF6B6B, #FF8E8B)' },
   { name: 'T-Shirts', type: 'Category', link: '/category/t-shirts', image: 'linear-gradient(135deg, #4ECDC4, #55EFC4)' },
   { name: 'Jackets', type: 'Category', link: '/category/jackets', image: 'linear-gradient(135deg, #6C5CE7, #A29BFE)' },
