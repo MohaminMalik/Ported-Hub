@@ -380,18 +380,18 @@ export default function AccountPage() {
                 </div>
               ) : (
                 <>
-                  <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex flex-col sm:flex-row gap-8">
                     <div className="flex-1 px-8 py-10 border border-[var(--border-color)] rounded-xl bg-[var(--surface-hover)]">
-                      <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Shirt / Tops Size</p>
-                      <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.shirtSize || 'Not specified'}</h3>
+                      <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '1rem' }}>Shirt / Tops Size</p>
+                      <h3 style={{ fontWeight: 600, fontSize: '1.4rem' }}>{userData?.shirtSize || 'Not specified'}</h3>
                     </div>
                     <div className="flex-1 px-8 py-10 border border-[var(--border-color)] rounded-xl bg-[var(--surface-hover)]">
-                      <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Pants Waist Size</p>
-                      <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.waistSize || 'Not specified'}</h3>
+                      <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '1rem' }}>Pants Waist Size</p>
+                      <h3 style={{ fontWeight: 600, fontSize: '1.4rem' }}>{userData?.waistSize || 'Not specified'}</h3>
                     </div>
                     <div className="flex-1 px-8 py-10 border border-[var(--border-color)] rounded-xl bg-[var(--surface-hover)]">
-                      <p style={{ color: 'var(--text-secondary)', marginBottom: '4px', fontSize: '0.9rem' }}>Shoe Size</p>
-                      <h3 style={{ fontWeight: 600, fontSize: '1.2rem' }}>{userData?.shoeSize || 'Not specified'}</h3>
+                      <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '1rem' }}>Shoe Size</p>
+                      <h3 style={{ fontWeight: 600, fontSize: '1.4rem' }}>{userData?.shoeSize || 'Not specified'}</h3>
                     </div>
                   </div>
 
