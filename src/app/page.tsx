@@ -3,14 +3,14 @@ import { ArrowRight, Sparkles, Recycle, ShieldCheck, Gamepad2 } from 'lucide-rea
 import ProductCard from '@/components/ProductCard';
 
 const categories = [
-  { id: 'shirts', name: 'Shirts', gradient: 'linear-gradient(135deg, #FF6B6B, #FF8E8B)' },
-  { id: 't-shirts', name: 'T-Shirts', gradient: 'linear-gradient(135deg, #4ECDC4, #55EFC4)' },
-  { id: 'jackets', name: 'Jackets', gradient: 'linear-gradient(135deg, #6C5CE7, #A29BFE)' },
-  { id: 'leather-jackets', name: 'Leather Jackets', gradient: 'linear-gradient(135deg, #2D3436, #636E72)' },
-  { id: 'bags', name: 'Bags', gradient: 'linear-gradient(135deg, #FD79A8, #FAB1A0)' },
+  { id: 'shirts', name: 'Shirts', gradient: "url('/images/boxes/shirt.jpeg') center/cover" },
+  { id: 't-shirts', name: 'T-Shirts', gradient: "url('/images/boxes/tshirt.jpeg') center/cover" },
+  { id: 'jackets', name: 'Jackets', gradient: "url('/images/boxes/jacket.jpeg') center/cover" },
+  { id: 'leather-jackets', name: 'Leather Jackets', gradient: "url('/images/boxes/leather-jackets.jpeg') center/cover" },
+  { id: 'bags', name: 'Bags', gradient: "url('/images/boxes/bags.jpeg') center/cover" },
   { id: 'shoes', name: 'Shoes', gradient: "url('/images/shoes/shoebox.jpeg') center/cover" },
-  { id: 'sweaters', name: 'Sweaters', gradient: 'linear-gradient(135deg, #E17055, #FFEAA7)' },
-  { id: 'hoodies', name: 'Hoodies', gradient: 'linear-gradient(135deg, #00B894, #55EFC4)' },
+  { id: 'sweaters', name: 'Sweaters', gradient: "url('/images/boxes/sweaters.jpeg') center/cover" },
+  { id: 'hoodies', name: 'Hoodies', gradient: "url('/images/boxes/hoodie.jpeg') center/cover" },
 ];
 
 const featuredProducts = [
