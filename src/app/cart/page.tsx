@@ -123,8 +123,8 @@ export default function CartPage() {
     return acc + (isNaN(p) ? 0 : p);
   }, 0);
   const discountAmount = appliedCoupon ? subtotal * 0.10 : 0;
-  // 35.91 USD * 83.5 = ~2999 INR
-  const shipping = subtotal >= 35.91 || subtotal === 0 ? 0.00 : 10.00;
+  // Free shipping over 3000 INR
+  const shipping = subtotal >= 3000 || subtotal === 0 ? 0 : 250;
   const total = subtotal - discountAmount + shipping;
 
   const applyCoupon = () => {
@@ -175,7 +175,7 @@ export default function CartPage() {
     }
 
     showToast('Initializing secure checkout...', 'info');
-    const inrAmount = Math.round(total * 83.5);
+    const inrAmount = Math.round(total);
     
     try {
       const res = await fetch('/api/razorpay', {
