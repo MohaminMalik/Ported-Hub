@@ -407,7 +407,7 @@ export default function CartPage() {
             
             <div style={{ width: '200px', height: '200px', background: 'white', margin: '0 auto 24px', borderRadius: '12px', padding: '16px', border: '1px solid #ddd' }}>
               {/* Replace src with the actual QR code image */}
-              <img src="/images/shoes/qr.jpeg" alt="UPI QR Code" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:black;font-weight:bold;">[Your QR Code Here]</div>'; }} />
+              <img src="/images/scanner.jpeg" alt="UPI QR Code" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement!.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:black;font-weight:bold;">[Your QR Code Here]</div>'; }} />
             </div>
 
             <div style={{ textAlign: 'left', marginBottom: '24px' }}>
