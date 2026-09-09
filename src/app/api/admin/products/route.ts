@@ -17,9 +17,57 @@ export async function DELETE(req: Request) {
     
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
 
+    // Find the product first to get its images
+    const product = await prisma.product.findUnique({ where: { id } });
+    if (!product) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+    // Try to delete images from GitHub if token exists
+    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+    if (GITHUB_TOKEN && product.images && product.images.length > 0) {
+      const REPO = 'MohaminMalik/Ported-Hub';
+      
+      for (const imgString of product.images) {
+        // Parse "url('/images/filename.jpg') center/cover" -> "/images/filename.jpg"
+        const cleanPath = imgString.replace("url('", "").replace("') center/cover", "");
+        
+        // Only attempt to delete if it's an uploaded image in the /images folder
+        if (cleanPath.startsWith('/images/')) {
+          const filePath = `public${cleanPath}`; // e.g. "public/images/12345.jpg"
+          
+          try {
+            // 1. Get file SHA (required for GitHub deletion)
+            const getRes = await fetch(`https://api.github.com/repos/${REPO}/contents/${filePath}`, {
+              headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}` }
+            });
+            
+            if (getRes.ok) {
+              const fileData = await getRes.json();
+              
+              // 2. Send DELETE request
+              await fetch(`https://api.github.com/repos/${REPO}/contents/${filePath}`, {
+                method: 'DELETE',
+                headers: { 
+                  'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  message: `Delete product image: ${filePath}`,
+                  sha: fileData.sha
+                })
+              });
+            }
+          } catch (e) {
+            console.error(`Failed to delete image from github: ${filePath}`, e);
+            // Continue deleting the product even if image deletion fails
+          }
+        }
+      }
+    }
+
     await prisma.product.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
+    console.error('Delete product error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

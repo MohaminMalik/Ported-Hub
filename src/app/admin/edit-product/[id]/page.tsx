@@ -1,12 +1,14 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { showToast } from '@/components/Toast';
 import { ArrowLeft, UploadCloud, X } from 'lucide-react';
 import Link from 'next/link';
 
-export default function EditProductPage({ params }: { params: { id: string } }) {
+export default function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
+  const unwrappedParams = use(params);
+  const productId = unwrappedParams.id;
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -33,7 +35,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
     fetch('/api/admin/products')
       .then(res => res.json())
       .then(data => {
-        const product = data.find((p: any) => p.id === parseInt(params.id));
+        const product = data.find((p: any) => p.id === parseInt(productId));
         if (product) {
           setFormData({
             name: product.name || '',
@@ -56,7 +58,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
         }
       })
       .finally(() => setLoading(false));
-  }, [params.id, router]);
+  }, [productId, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
@@ -128,7 +130,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
       // 2. Update Product
       const payload = {
-        id: parseInt(params.id),
+        id: parseInt(productId),
         ...formData,
         price: parseFloat(formData.price),
         images: finalImages
