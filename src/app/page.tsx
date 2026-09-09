@@ -18,11 +18,20 @@ import { prisma } from '@/utils/prisma';
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const dbProducts = await prisma.product.findMany({
+  let dbProducts = await prisma.product.findMany({
     where: { isFreshDrop: true },
     take: 3,
     orderBy: { createdAt: 'desc' }
   });
+
+  if (dbProducts.length < 3) {
+    const additionalProducts = await prisma.product.findMany({
+      where: { isFreshDrop: false },
+      take: 3 - dbProducts.length,
+      orderBy: { createdAt: 'desc' }
+    });
+    dbProducts = [...dbProducts, ...additionalProducts];
+  }
   
   // Fallback if DB is empty
   const featuredProducts = dbProducts.length > 0 ? dbProducts : [
@@ -70,7 +79,7 @@ export default async function Home() {
             View All <ArrowRight size={16} />
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {featuredProducts.map(product => (
             <ProductCard key={product.id} product={product} />
           ))}
