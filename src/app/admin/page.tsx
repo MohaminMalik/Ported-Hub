@@ -11,10 +11,48 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Admin auth state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
   useEffect(() => {
-    // We should ideally check if user is admin via API here
-    fetchData();
+    if (localStorage.getItem('admin_auth') === 'true') {
+      setIsAuthenticated(true);
+      fetchData();
+    } else {
+      setLoading(false);
+    }
   }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      if (res.ok) {
+        localStorage.setItem('admin_auth', 'true');
+        setIsAuthenticated(true);
+        fetchData();
+        showToast('Welcome Admin', 'success');
+      } else {
+        setLoginError('Invalid email or password');
+        showToast('Invalid credentials', 'error');
+      }
+    } catch (err) {
+      setLoginError('Server error');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_auth');
+    setIsAuthenticated(false);
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -74,6 +112,42 @@ export default function AdminDashboard() {
 
   if (loading) return <div className="container py-12 text-center">Loading admin dashboard...</div>;
 
+  if (!isAuthenticated) {
+    return (
+      <div className="container py-24 flex justify-center items-center">
+        <div className="card" style={{ padding: '32px', width: '100%', maxWidth: '400px' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '24px', textAlign: 'center' }}>Admin Login</h2>
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Email</label>
+              <input 
+                type="email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)', outline: 'none' }}
+                required 
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Password</label>
+              <input 
+                type="password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-primary)', outline: 'none' }}
+                required 
+              />
+            </div>
+            {loginError && <p style={{ color: '#ff7675', fontSize: '0.9rem', margin: 0 }}>{loginError}</p>}
+            <button type="submit" className="btn-primary" style={{ marginTop: '8px', padding: '14px' }}>
+              Login to Dashboard
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container py-12 animate-fade-in" style={{ display: 'flex', gap: '32px' }}>
       <div style={{ width: '250px', flexShrink: 0 }}>
@@ -97,6 +171,12 @@ export default function AdminDashboard() {
               style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', width: '100%', textAlign: 'left', borderRadius: '8px', background: activeTab === 'users' ? 'rgba(var(--accent-rgb), 0.1)' : 'transparent', color: activeTab === 'users' ? 'var(--accent-color)' : 'var(--text-primary)', border: 'none', cursor: 'pointer', fontWeight: 600 }}
             >
               <Users size={20} /> Users & Roles
+            </button>
+            <button 
+              onClick={handleLogout}
+              style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', width: '100%', textAlign: 'left', borderRadius: '8px', background: 'transparent', color: '#ff7675', border: 'none', cursor: 'pointer', fontWeight: 600, marginTop: '24px' }}
+            >
+              Logout
             </button>
           </div>
         </div>
