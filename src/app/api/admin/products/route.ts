@@ -40,6 +40,7 @@ export async function POST(req: Request) {
         color: body.color,
         brand: body.brand,
         thriftStory: body.thriftStory,
+        isFreshDrop: body.isFreshDrop || false,
         images: body.images
       }
     });

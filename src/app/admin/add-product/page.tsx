@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { showToast } from '@/components/Toast';
-import { ArrowLeft, UploadCloud, X, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, UploadCloud, X } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AddProductPage() {
@@ -24,11 +24,13 @@ export default function AddProductPage() {
     era: 'Modern',
     color: '',
     brand: '',
-    thriftStory: ''
+    thriftStory: '',
+    isFreshDrop: false
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+    setFormData({ ...formData, [e.target.name]: value });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,8 +95,9 @@ export default function AddProductPage() {
         const data = await res.json();
         showToast(data.error || 'Failed to add product', 'error');
       }
-    } catch (err) {
-      showToast('An error occurred during submission', 'error');
+    } catch (err: any) {
+      console.error(err);
+      showToast(err.message || 'An error occurred during submission', 'error');
     } finally {
       setLoading(false);
       setUploading(false);
@@ -180,6 +183,12 @@ export default function AddProductPage() {
               <select name="category" value={formData.category} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors appearance-none cursor-pointer">
                 <option value="shoes">Shoes</option>
                 <option value="shirts">Shirts</option>
+                <option value="t-shirts">T-Shirts</option>
+                <option value="jackets">Jackets</option>
+                <option value="leather-jackets">Leather Jackets</option>
+                <option value="bags">Bags</option>
+                <option value="sweaters">Sweaters</option>
+                <option value="hoodies">Hoodies</option>
                 <option value="pants">Pants</option>
                 <option value="accessories">Accessories</option>
                 <option value="outerwear">Outerwear</option>
@@ -188,17 +197,52 @@ export default function AddProductPage() {
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Size *</label>
-              <input required type="text" name="size" value={formData.size} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors" placeholder="e.g. M, L, EU 42" />
+              <input required list="sizes" type="text" name="size" value={formData.size} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors" placeholder="e.g. M, L, EU 42" />
+              <datalist id="sizes">
+                <option value="XS" />
+                <option value="S" />
+                <option value="M" />
+                <option value="L" />
+                <option value="XL" />
+                <option value="XXL" />
+                <option value="US 7 / EU 40" />
+                <option value="US 8 / EU 41" />
+                <option value="US 9 / EU 42.5" />
+                <option value="US 10 / EU 44" />
+                <option value="US 11 / EU 45" />
+              </datalist>
             </div>
             
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Color *</label>
-              <input required type="text" name="color" value={formData.color} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors" placeholder="e.g. Black, Navy" />
+              <input required list="colors" type="text" name="color" value={formData.color} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors" placeholder="e.g. Black, Navy" />
+              <datalist id="colors">
+                <option value="Black" />
+                <option value="White" />
+                <option value="Navy Blue" />
+                <option value="Grey" />
+                <option value="Brown" />
+                <option value="Red" />
+                <option value="Green" />
+                <option value="Olive" />
+                <option value="Beige" />
+                <option value="Multicolor" />
+              </datalist>
             </div>
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Material</label>
-              <input type="text" name="material" value={formData.material} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors" placeholder="e.g. 100% Cotton" />
+              <input list="materials" type="text" name="material" value={formData.material} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors" placeholder="e.g. 100% Cotton" />
+              <datalist id="materials">
+                <option value="100% Cotton" />
+                <option value="Genuine Leather" />
+                <option value="Denim" />
+                <option value="Polyester" />
+                <option value="Wool" />
+                <option value="Suede" />
+                <option value="Corduroy" />
+                <option value="Nylon" />
+              </datalist>
             </div>
             
             <div className="flex flex-col gap-2">
@@ -209,6 +253,20 @@ export default function AddProductPage() {
             <div className="flex flex-col gap-2 md:col-span-2">
               <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Thrift Story</label>
               <textarea name="thriftStory" value={formData.thriftStory} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none min-h-[100px] transition-colors" placeholder="Where did you find this gem?"></textarea>
+            </div>
+
+            <div className="flex flex-col gap-2 md:col-span-2 p-6 rounded-xl border border-[var(--border-color)] bg-[var(--surface-hover)]">
+              <label className="flex items-center gap-4 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  name="isFreshDrop" 
+                  checked={formData.isFreshDrop} 
+                  onChange={handleChange} 
+                  className="w-6 h-6 rounded accent-[var(--accent-color)]"
+                />
+                <span className="text-lg font-bold">Feature as a Fresh Drop?</span>
+              </label>
+              <p className="text-sm text-secondary ml-10">If checked, this product will be showcased on the homepage under "Fresh Drops". Otherwise, it will only appear in the Shop and its Category.</p>
             </div>
           </div>
 

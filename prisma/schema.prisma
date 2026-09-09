@@ -71,6 +71,7 @@ model Product {
   color       String?
   brand       String?
   thriftStory String?
+  isFreshDrop Boolean  @default(false)
   images      String[] // Array of image URLs
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
