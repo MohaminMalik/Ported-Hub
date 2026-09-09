@@ -1,13 +1,18 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { showToast } from '@/components/Toast';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, UploadCloud, X, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AddProductPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -19,23 +24,60 @@ export default function AddProductPage() {
     era: 'Modern',
     color: '',
     brand: '',
-    thriftStory: '',
-    images: '' // Comma separated urls
+    thriftStory: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      setSelectedFiles(prev => [...prev, ...filesArray]);
+      
+      const newPreviews = filesArray.map(file => URL.createObjectURL(file));
+      setPreviewUrls(prev => [...prev, ...newPreviews]);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (selectedFiles.length === 0) {
+      showToast('Please upload at least one image', 'error');
+      return;
+    }
+
     setLoading(true);
+    setUploading(true);
 
     try {
+      // 1. Upload Images
+      const uploadData = new FormData();
+      selectedFiles.forEach(file => uploadData.append('file', file));
+
+      const uploadRes = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: uploadData
+      });
+
+      if (!uploadRes.ok) throw new Error('Image upload failed');
+      const { urls } = await uploadRes.json();
+      setUploading(false);
+
+      // Convert URLs to the frontend gradient format
+      const formattedImages = urls.map((u: string) => `url('${u}') center/cover`);
+
+      // 2. Add Product
       const payload = {
         ...formData,
         price: parseFloat(formData.price),
-        images: formData.images.split(',').map(url => url.trim()).filter(Boolean)
+        images: formattedImages
       };
 
       const res = await fetch('/api/admin/products', {
@@ -52,41 +94,90 @@ export default function AddProductPage() {
         showToast(data.error || 'Failed to add product', 'error');
       }
     } catch (err) {
-      showToast('An error occurred', 'error');
+      showToast('An error occurred during submission', 'error');
     } finally {
       setLoading(false);
+      setUploading(false);
     }
   };
 
   return (
-    <div className="container py-12 max-w-2xl mx-auto">
-      <Link href="/admin" className="flex items-center gap-2 text-secondary hover:text-white mb-8 transition-colors">
-        <ArrowLeft size={20} /> Back to Dashboard
+    <div className="container py-12 max-w-4xl mx-auto animate-fade-in">
+      <Link href="/admin" className="inline-flex items-center gap-2 text-secondary hover:text-white mb-8 transition-colors bg-[var(--surface-color)] px-4 py-2 rounded-full text-sm font-semibold border border-[var(--border-color)] shadow-sm">
+        <ArrowLeft size={16} /> Back to Dashboard
       </Link>
       
-      <div className="card p-8">
-        <h1 className="text-2xl font-bold mb-6">Add New Product</h1>
+      <div className="card p-8 md:p-10 shadow-xl border border-[var(--border-color)] bg-gradient-to-br from-[var(--surface-color)] to-[var(--bg-color)]">
+        <h1 className="text-3xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">List a New Drop</h1>
         
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-secondary">Product Name *</label>
-            <input required type="text" name="name" value={formData.name} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] text-white outline-none" placeholder="e.g. Vintage Nike Windbreaker" />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+          {/* Image Upload Section */}
+          <div className="flex flex-col gap-3">
+            <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Product Photos *</label>
+            <div 
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full border-2 border-dashed border-[var(--border-color)] hover:border-[var(--accent-color)] bg-[var(--surface-color)] rounded-2xl p-10 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all hover:bg-[rgba(10,132,255,0.05)]"
+            >
+              <div className="w-16 h-16 rounded-full bg-[var(--surface-hover)] flex items-center justify-center">
+                <UploadCloud size={32} className="text-secondary" />
+              </div>
+              <div className="text-center">
+                <p className="font-semibold text-lg">Click to browse or drag & drop</p>
+                <p className="text-sm text-secondary mt-1">High quality JPEG, PNG up to 5MB</p>
+              </div>
+              <input 
+                ref={fileInputRef}
+                type="file" 
+                multiple 
+                accept="image/*" 
+                onChange={handleFileChange} 
+                className="hidden" 
+              />
+            </div>
+
+            {previewUrls.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                {previewUrls.map((url, i) => (
+                  <div key={i} className="relative aspect-square rounded-xl overflow-hidden border border-[var(--border-color)] group shadow-sm">
+                    <img src={url} alt="preview" className="w-full h-full object-cover" />
+                    <button 
+                      type="button" 
+                      onClick={() => removeFile(i)}
+                      className="absolute top-2 right-2 bg-black/70 p-1.5 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-secondary">Description *</label>
-            <textarea required name="description" value={formData.description} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] text-white outline-none min-h-[100px]" placeholder="Detailed product description..."></textarea>
-          </div>
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--border-color)] to-transparent my-2" />
 
-          <div className="grid grid-cols-2 gap-4">
+          {/* Details Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-2 md:col-span-2">
+              <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Product Name *</label>
+              <input required type="text" name="name" value={formData.name} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors" placeholder="e.g. Vintage Nike Windbreaker" />
+            </div>
+
+            <div className="flex flex-col gap-2 md:col-span-2">
+              <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Description *</label>
+              <textarea required name="description" value={formData.description} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none min-h-[120px] transition-colors" placeholder="Tell the story of this piece..."></textarea>
+            </div>
+
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-secondary">Price (₹) *</label>
-              <input required type="number" step="0.01" name="price" value={formData.price} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] text-white outline-none" placeholder="e.g. 1999" />
+              <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Price (₹) *</label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary">₹</span>
+                <input required type="number" step="0.01" name="price" value={formData.price} onChange={handleChange} className="w-full p-4 pl-8 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors" placeholder="1999" />
+              </div>
             </div>
             
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-secondary">Category *</label>
-              <select name="category" value={formData.category} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] text-white outline-none">
+              <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Category *</label>
+              <select name="category" value={formData.category} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors appearance-none cursor-pointer">
                 <option value="shoes">Shoes</option>
                 <option value="shirts">Shirts</option>
                 <option value="pants">Pants</option>
@@ -94,45 +185,41 @@ export default function AddProductPage() {
                 <option value="outerwear">Outerwear</option>
               </select>
             </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-secondary">Size *</label>
-              <input required type="text" name="size" value={formData.size} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] text-white outline-none" placeholder="e.g. M, L, EU 42" />
+              <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Size *</label>
+              <input required type="text" name="size" value={formData.size} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors" placeholder="e.g. M, L, EU 42" />
             </div>
             
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-secondary">Color *</label>
-              <input required type="text" name="color" value={formData.color} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] text-white outline-none" placeholder="e.g. Black, Navy" />
+              <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Color *</label>
+              <input required type="text" name="color" value={formData.color} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors" placeholder="e.g. Black, Navy" />
             </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-secondary">Material</label>
-              <input type="text" name="material" value={formData.material} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] text-white outline-none" placeholder="e.g. 100% Cotton" />
+              <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Material</label>
+              <input type="text" name="material" value={formData.material} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors" placeholder="e.g. 100% Cotton" />
             </div>
             
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-secondary">Brand</label>
-              <input type="text" name="brand" value={formData.brand} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] text-white outline-none" placeholder="e.g. Nike, Levi's" />
+              <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Brand</label>
+              <input type="text" name="brand" value={formData.brand} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none transition-colors" placeholder="e.g. Nike, Levi's" />
+            </div>
+
+            <div className="flex flex-col gap-2 md:col-span-2">
+              <label className="text-sm font-semibold text-secondary uppercase tracking-wider">Thrift Story</label>
+              <textarea name="thriftStory" value={formData.thriftStory} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] focus:border-[var(--accent-color)] text-white outline-none min-h-[100px] transition-colors" placeholder="Where did you find this gem?"></textarea>
             </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-secondary">Thrift Story</label>
-            <textarea name="thriftStory" value={formData.thriftStory} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] text-white outline-none min-h-[80px]" placeholder="How was this found?"></textarea>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-secondary">Image URLs (Comma separated) *</label>
-            <textarea required name="images" value={formData.images} onChange={handleChange} className="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--surface-color)] text-white outline-none min-h-[100px]" placeholder="url('/images/shoes/1.jpg') center/cover, url('/images/shoes/2.jpg') center/cover"></textarea>
-            <p className="text-xs text-secondary mt-1">Make sure to format like: <code className="bg-[var(--surface-hover)] px-1 rounded">url('/image.jpg') center/cover</code></p>
-          </div>
-
-          <button type="submit" disabled={loading} className="btn-primary mt-4 p-4 text-lg">
-            {loading ? 'Adding Product...' : 'Publish Product'}
+          <button type="submit" disabled={loading} className="btn-primary mt-6 p-5 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-lg flex justify-center items-center gap-2">
+            {uploading ? (
+              <span className="flex items-center gap-2"><UploadCloud className="animate-bounce" /> Uploading Images...</span>
+            ) : loading ? (
+              'Publishing...'
+            ) : (
+              'Publish Product'
+            )}
           </button>
         </form>
       </div>

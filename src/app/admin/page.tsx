@@ -11,6 +11,14 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Editable Revenue State
+  const [mockRevenue, setMockRevenue] = useState(45200);
+  const [isEditingRevenue, setIsEditingRevenue] = useState(false);
+
+  // Editable Users State
+  const [editingUserId, setEditingUserId] = useState<number | null>(null);
+  const [editUserForm, setEditUserForm] = useState({ firstName: '', lastName: '', email: '' });
+
   // Admin auth state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [email, setEmail] = useState('');
@@ -110,6 +118,50 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteUser = async (id: number) => {
+    if (!confirm('Are you sure you want to completely remove this user?')) return;
+    try {
+      const res = await fetch(`/api/admin/users?id=${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        showToast('User removed', 'success');
+        fetchData();
+      } else {
+        showToast('Failed to remove user', 'error');
+      }
+    } catch (err) {
+      showToast('Error', 'error');
+    }
+  };
+
+  const handleEditUserClick = (u: any) => {
+    setEditingUserId(u.id);
+    setEditUserForm({ firstName: u.firstName, lastName: u.lastName, email: u.email });
+  };
+
+  const handleSaveUser = async (id: number) => {
+    try {
+      const res = await fetch(`/api/admin/users`, { 
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, ...editUserForm })
+      });
+      if (res.ok) {
+        showToast('User info updated', 'success');
+        setEditingUserId(null);
+        fetchData();
+      } else {
+        showToast('Failed to update user', 'error');
+      }
+    } catch (err) {
+      showToast('Error', 'error');
+    }
+  };
+
+  const handleSaveRevenue = () => {
+    setIsEditingRevenue(false);
+    showToast('Revenue updated locally!', 'success');
+  };
+
   if (loading) return <div className="container py-12 text-center">Loading admin dashboard...</div>;
 
   if (!isAuthenticated) {
@@ -197,9 +249,26 @@ export default function AdminDashboard() {
                   <p style={{ color: 'var(--text-secondary)', marginBottom: '8px' }}>Total Products</p>
                   <h3 style={{ fontSize: '2rem', fontWeight: 700 }}>{products.length}</h3>
                 </div>
-                <div style={{ padding: '24px', background: 'var(--surface-hover)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                  <p style={{ color: 'var(--text-secondary)', marginBottom: '8px' }}>Revenue (Mock)</p>
-                  <h3 style={{ fontSize: '2rem', fontWeight: 700 }}>₹45,200</h3>
+                <div style={{ padding: '24px', background: 'var(--surface-hover)', borderRadius: '12px', border: '1px solid var(--border-color)', position: 'relative' }}>
+                  <p style={{ color: 'var(--text-secondary)', marginBottom: '8px' }}>Total Revenue</p>
+                  
+                  {isEditingRevenue ? (
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <span style={{ fontSize: '1.2rem', fontWeight: 600 }}>₹</span>
+                      <input 
+                        type="number" 
+                        value={mockRevenue}
+                        onChange={(e) => setMockRevenue(Number(e.target.value))}
+                        style={{ width: '120px', padding: '8px', borderRadius: '6px', border: '1px solid var(--accent-color)', background: 'var(--bg-color)', color: 'var(--text-primary)', outline: 'none' }}
+                      />
+                      <button onClick={handleSaveRevenue} style={{ padding: '8px 12px', borderRadius: '6px', background: 'var(--accent-color)', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Save</button>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <h3 style={{ fontSize: '2rem', fontWeight: 700 }}>₹{mockRevenue.toLocaleString('en-IN')}</h3>
+                      <button onClick={() => setIsEditingRevenue(true)} style={{ background: 'none', border: 'none', color: 'var(--accent-color)', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600 }}>Edit</button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -254,14 +323,30 @@ export default function AdminDashboard() {
                     <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Email</th>
                     <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Sizes (Top/Waist/Shoe)</th>
                     <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Role</th>
+                    <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map(u => (
                     <tr key={u.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                       <td style={{ padding: '16px 8px' }}>#{u.id}</td>
-                      <td style={{ padding: '16px 8px', fontWeight: 500 }}>{u.firstName} {u.lastName}</td>
-                      <td style={{ padding: '16px 8px' }}>{u.email}</td>
+                      <td style={{ padding: '16px 8px', fontWeight: 500 }}>
+                        {editingUserId === u.id ? (
+                          <div style={{ display: 'flex', gap: '4px' }}>
+                            <input value={editUserForm.firstName} onChange={e => setEditUserForm({...editUserForm, firstName: e.target.value})} style={{ width: '80px', padding: '4px', background: 'var(--surface-color)', border: '1px solid var(--border-color)', color: 'white', outline: 'none' }} />
+                            <input value={editUserForm.lastName} onChange={e => setEditUserForm({...editUserForm, lastName: e.target.value})} style={{ width: '80px', padding: '4px', background: 'var(--surface-color)', border: '1px solid var(--border-color)', color: 'white', outline: 'none' }} />
+                          </div>
+                        ) : (
+                          `${u.firstName} ${u.lastName}`
+                        )}
+                      </td>
+                      <td style={{ padding: '16px 8px' }}>
+                        {editingUserId === u.id ? (
+                          <input value={editUserForm.email} onChange={e => setEditUserForm({...editUserForm, email: e.target.value})} style={{ width: '150px', padding: '4px', background: 'var(--surface-color)', border: '1px solid var(--border-color)', color: 'white', outline: 'none' }} />
+                        ) : (
+                          u.email
+                        )}
+                      </td>
                       <td style={{ padding: '16px 8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                         {u.shirtSize || '-'} / {u.waistSize || '-'} / {u.shoeSize || '-'}
                       </td>
@@ -274,6 +359,18 @@ export default function AdminDashboard() {
                           <option value="USER">User</option>
                           <option value="ADMIN">Admin</option>
                         </select>
+                      </td>
+                      <td style={{ padding: '16px 8px' }}>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          {editingUserId === u.id ? (
+                            <button onClick={() => handleSaveUser(u.id)} style={{ padding: '6px 10px', background: 'var(--accent-color)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}>Save</button>
+                          ) : (
+                            <button onClick={() => handleEditUserClick(u)} style={{ padding: '6px 10px', background: 'var(--surface-hover)', color: 'white', border: '1px solid var(--border-color)', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}>Edit</button>
+                          )}
+                          <button onClick={() => handleDeleteUser(u.id)} style={{ padding: '6px 8px', background: 'transparent', color: '#ff7675', border: 'none', cursor: 'pointer' }}>
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
