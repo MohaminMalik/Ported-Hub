@@ -290,7 +290,7 @@ export default function AdminDashboard() {
                     <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Name</th>
                     <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Price</th>
                     <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Category</th>
-                    <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Action</th>
+                    <th style={{ padding: '12px 8px', color: 'var(--text-secondary)', textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -300,7 +300,10 @@ export default function AdminDashboard() {
                       <td style={{ padding: '16px 8px', fontWeight: 500 }}>{p.name}</td>
                       <td style={{ padding: '16px 8px' }}>₹{p.price}</td>
                       <td style={{ padding: '16px 8px', textTransform: 'capitalize' }}>{p.category}</td>
-                      <td style={{ padding: '16px 8px' }}>
+                      <td style={{ padding: '16px 8px', textAlign: 'right' }}>
+                        <Link href={`/admin/edit-product/${p.id}`} style={{ marginRight: '16px', color: 'var(--accent-color)', fontWeight: 600, textDecoration: 'none' }}>
+                          Edit
+                        </Link>
                         <button onClick={() => handleDeleteProduct(p.id)} style={{ background: 'none', border: 'none', color: '#ff7675', cursor: 'pointer', padding: '8px' }}>
                           <Trash2 size={18} />
                         </button>

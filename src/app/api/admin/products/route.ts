@@ -24,6 +24,25 @@ export async function DELETE(req: Request) {
   }
 }
 
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    const { id, ...data } = body;
+    
+    if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
+
+    const product = await prisma.product.update({
+      where: { id },
+      data
+    });
+    
+    return NextResponse.json(product);
+  } catch (error) {
+    console.error('Update product error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
