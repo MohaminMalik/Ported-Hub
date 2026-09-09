@@ -59,21 +59,37 @@ export default function AddProductPage() {
     setUploading(true);
 
     try {
-      // 1. Upload Images
-      const uploadData = new FormData();
-      selectedFiles.forEach(file => uploadData.append('file', file));
+      // 1. Upload Images Sequentially
+      const uploadedUrls: string[] = [];
+      
+      for (const file of selectedFiles) {
+        const uploadData = new FormData();
+        uploadData.append('file', file);
 
-      const uploadRes = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: uploadData
-      });
+        const uploadRes = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: uploadData
+        });
 
-      if (!uploadRes.ok) throw new Error('Image upload failed');
-      const { urls } = await uploadRes.json();
+        if (!uploadRes.ok) {
+          let errorMsg = `Failed to upload ${file.name}`;
+          try {
+            const errData = await uploadRes.json();
+            errorMsg = errData.error || errorMsg;
+          } catch (e) {}
+          throw new Error(`${errorMsg} (Status: ${uploadRes.status})`);
+        }
+        
+        const { urls } = await uploadRes.json();
+        if (urls && urls.length > 0) {
+          uploadedUrls.push(urls[0]);
+        }
+      }
+      
       setUploading(false);
 
       // Convert URLs to the frontend gradient format
-      const formattedImages = urls.map((u: string) => `url('${u}') center/cover`);
+      const formattedImages = uploadedUrls.map((u: string) => `url('${u}') center/cover`);
 
       // 2. Add Product
       const payload = {
