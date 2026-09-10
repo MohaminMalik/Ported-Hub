@@ -50,8 +50,14 @@ export default function ProductCard({ product }: { product: any }) {
 
   return (
     <div className="card" onClick={handleCardClick} style={{ display: 'flex', flexDirection: 'column', height: '100%', cursor: 'pointer' }}>
-      <div className="relative aspect-square bg-[var(--surface-hover)]">
-        <div style={{ width: '100%', height: '100%', background: product.images[currentSlide], transition: 'background 0.3s ease' }}></div>
+      <div className="relative aspect-square bg-[var(--surface-hover)] overflow-hidden">
+        <div style={{ width: '100%', height: '100%', background: product.images[currentSlide], transition: 'background 0.3s ease', opacity: product.isSoldOut ? 0.6 : 1 }}></div>
+        
+        {product.isSoldOut && (
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', zIndex: 10 }}>
+             <span style={{ backgroundColor: 'rgba(0, 0, 0, 0.8)', color: '#fff', padding: '10px 24px', fontSize: '1.25rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px', transform: 'rotate(-5deg)', border: '2px solid #fff' }}>Sold Out</span>
+          </div>
+        )}
         
         {product.images.length > 1 && (
           <>
@@ -74,9 +80,13 @@ export default function ProductCard({ product }: { product: any }) {
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', flexGrow: 1 }}>{product.description}</p>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
           <span style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent-color)' }}>{formatPrice(product.price)}</span>
-          <button onClick={handleAddToCart} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
-            <ShoppingCart size={16} /> Add
-          </button>
+          {product.isSoldOut ? (
+            <span style={{ padding: '8px 16px', fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Sold Out</span>
+          ) : (
+            <button onClick={handleAddToCart} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
+              <ShoppingCart size={16} /> Add
+            </button>
+          )}
         </div>
       </div>
     </div>

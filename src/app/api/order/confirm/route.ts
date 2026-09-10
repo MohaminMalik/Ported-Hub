@@ -27,6 +27,22 @@ export async function POST(request: Request) {
           status: 'Processing',
         }
       });
+
+      // Update products to mark them as sold out
+      try {
+        const productIds = cartItems
+          .map((item: any) => parseInt(item.id?.toString(), 10))
+          .filter((id: number) => !isNaN(id));
+          
+        if (productIds.length > 0) {
+          await prisma.product.updateMany({
+            where: { id: { in: productIds } },
+            data: { isSoldOut: true }
+          });
+        }
+      } catch (updateError) {
+        console.error('Failed to update products to sold out:', updateError);
+      }
     } catch (dbError) {
       console.error('Failed to save order to DB:', dbError);
     }

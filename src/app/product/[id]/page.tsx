@@ -156,9 +156,15 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
             </p>
           </div>
 
-          <button onClick={handleAddToCart} className="btn-primary" style={{ width: '100%', padding: '18px', fontSize: '1.2rem', marginBottom: '40px', display: 'flex', justifyContent: 'center' }}>
-            <ShoppingCart size={24} /> Add to Cart
-          </button>
+          {product.isSoldOut ? (
+            <button disabled className="btn-primary" style={{ width: '100%', padding: '18px', fontSize: '1.2rem', marginBottom: '40px', display: 'flex', justifyContent: 'center', background: 'var(--text-secondary)', opacity: 0.7, cursor: 'not-allowed' }}>
+              Sold Out
+            </button>
+          ) : (
+            <button onClick={handleAddToCart} className="btn-primary" style={{ width: '100%', padding: '18px', fontSize: '1.2rem', marginBottom: '40px', display: 'flex', justifyContent: 'center' }}>
+              <ShoppingCart size={24} /> Add to Cart
+            </button>
+          )}
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', borderTop: '1px solid var(--border-color)', paddingTop: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
