@@ -23,18 +23,11 @@ export default async function Home() {
     take: 3,
     orderBy: { createdAt: 'desc' }
   });
-
-  if (dbProducts.length < 3) {
-    const additionalProducts = await prisma.product.findMany({
-      where: { isFreshDrop: false },
-      take: 3 - dbProducts.length,
-      orderBy: { createdAt: 'desc' }
-    });
-    dbProducts = [...dbProducts, ...additionalProducts];
-  }
   
-  // Fallback if DB is empty
-  const featuredProducts = dbProducts.length > 0 ? dbProducts : [
+  const totalProductsCount = await prisma.product.count();
+  
+  // Fallback if DB is completely empty (no products at all)
+  const featuredProducts = totalProductsCount > 0 ? dbProducts : [
     { id: 11, name: 'Dolce & Gabbana Vintage Leather Boots', description: 'Classic Chestnut brown boots with double stitch detailing.  Excellent condition, Comfortable and durable. Low stacked leather heel.', price: '2,999', images: ["url('/images/shoes/dg1.jpeg') center/cover", "url('/images/shoes/dg2.jpeg') center/cover", "url('/images/shoes/dg3.jpeg') center/cover", "url('/images/shoes/dg4.jpeg') center/cover", "url('/images/shoes/dg5.jpeg') center/cover", "url('/images/shoes/dg6.jpeg') center/cover", "url('/images/shoes/dg7.jpeg') center/cover", "url('/images/shoes/dg8.jpeg') center/cover"] },
     { id: 12, name: 'Zara High Top Suede Sneakers ', description: 'Brushed suede upper in warn camel/ wheat tan. durable, low profile vulcanized rubber cupsole with tonal foxing. smooth interior lining with a cusioned footbed for daily wear.', price: '1,899', images: ["url('/images/shoes/zara1.jpeg') center/cover", "url('/images/shoes/zara2.jpeg') center/cover", "url('/images/shoes/zara3.jpeg') center/cover", "url('/images/shoes/zara4.jpeg') center/cover", "url('/images/shoes/zara5.jpeg') center/cover"] },
     { id: 13, name: 'Dickies Suede Vintage Chelsea ', description: 'Matte Black Suede/innubuck upper with subtle texture.Wood look cuban heel with contrasting  welt sticthing. Rare find in this size and condition. Cleaned and restored by our team.', price: '1,299', images: ["url('/images/shoes/diki1.jpeg') center/cover", "url('/images/shoes/diki2.jpeg') center/cover", "url('/images/shoes/diki3.jpeg') center/cover", "url('/images/shoes/diki4.jpeg') center/cover", "url('/images/shoes/diki5.jpeg') center/cover", "url('/images/shoes/diki6.jpeg') center/cover"] },
@@ -80,9 +73,15 @@ export default async function Home() {
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {featuredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {featuredProducts.length > 0 ? (
+            featuredProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          ) : (
+            <div className="col-span-1 md:col-span-3 text-center py-12 bg-[var(--surface-color)] rounded-2xl border border-[var(--border-color)]">
+              <p className="text-secondary text-lg">No fresh drops available at the moment. Check back soon!</p>
+            </div>
+          )}
         </div>
       </section>
 
