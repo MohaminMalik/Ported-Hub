@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Settings, Users, Package, BarChart3, Plus, Trash2 } from 'lucide-react';
+import { Settings, Users, Package, BarChart3, Plus, Trash2, LayoutGrid } from 'lucide-react';
 import { showToast } from '@/components/Toast';
 
 export default function AdminDashboard() {
@@ -11,6 +11,8 @@ export default function AdminDashboard() {
   const [products, setProducts] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [categories, setCategories] = useState<any[]>([]);
 
   // Editable Revenue State
   const [mockRevenue, setMockRevenue] = useState(45200);
@@ -66,9 +68,10 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [prodRes, userRes] = await Promise.all([
+      const [prodRes, userRes, catRes] = await Promise.all([
         fetch('/api/admin/products'),
-        fetch('/api/admin/users')
+        fetch('/api/admin/users'),
+        fetch('/api/admin/categories')
       ]);
       
       if (prodRes.ok) {
@@ -78,6 +81,10 @@ export default function AdminDashboard() {
       if (userRes.ok) {
         const u = await userRes.json();
         setUsers(u);
+      }
+      if (catRes.ok) {
+        const c = await catRes.json();
+        setCategories(c);
       }
     } catch (err) {
       console.error(err);
@@ -95,6 +102,21 @@ export default function AdminDashboard() {
         fetchData();
       } else {
         showToast('Failed to delete product', 'error');
+      }
+    } catch (err) {
+      showToast('Error', 'error');
+    }
+  };
+
+  const handleDeleteCategory = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this category?')) return;
+    try {
+      const res = await fetch(`/api/admin/categories?id=${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        showToast('Category deleted', 'success');
+        fetchData();
+      } else {
+        showToast('Failed to delete category', 'error');
       }
     } catch (err) {
       showToast('Error', 'error');
@@ -220,6 +242,12 @@ export default function AdminDashboard() {
               <Package size={20} /> Products
             </button>
             <button 
+              onClick={() => setActiveTab('categories')}
+              style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', width: '100%', textAlign: 'left', borderRadius: '8px', background: activeTab === 'categories' ? 'rgba(var(--accent-rgb), 0.1)' : 'transparent', color: activeTab === 'categories' ? 'var(--accent-color)' : 'var(--text-primary)', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+            >
+              <LayoutGrid size={20} /> Categories
+            </button>
+            <button 
               onClick={() => setActiveTab('users')}
               style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', width: '100%', textAlign: 'left', borderRadius: '8px', background: activeTab === 'users' ? 'rgba(var(--accent-rgb), 0.1)' : 'transparent', color: activeTab === 'users' ? 'var(--accent-color)' : 'var(--text-primary)', border: 'none', cursor: 'pointer', fontWeight: 600 }}
             >
@@ -306,6 +334,47 @@ export default function AdminDashboard() {
                           Edit
                         </Link>
                         <button onClick={() => handleDeleteProduct(p.id)} style={{ background: 'none', border: 'none', color: '#ff7675', cursor: 'pointer', padding: '8px' }}>
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {activeTab === 'categories' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Manage Category Boxes</h2>
+                <button onClick={() => router.push('/admin/add-category')} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px' }}>
+                  <Plus size={18} /> Add Category
+                </button>
+              </div>
+              
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left' }}>
+                    <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>ID / Slug</th>
+                    <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Name</th>
+                    <th style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>Image Preview</th>
+                    <th style={{ padding: '12px 8px', color: 'var(--text-secondary)', textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {categories.map(c => (
+                    <tr key={c.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                      <td style={{ padding: '16px 8px' }}>{c.slug}</td>
+                      <td style={{ padding: '16px 8px', fontWeight: 500 }}>{c.name}</td>
+                      <td style={{ padding: '16px 8px' }}>
+                        <div style={{ width: '60px', height: '40px', background: c.imageUrl, borderRadius: '4px' }}></div>
+                      </td>
+                      <td style={{ padding: '16px 8px', textAlign: 'right' }}>
+                        <Link href={`/admin/edit-category/${c.id}`} style={{ marginRight: '16px', color: 'var(--accent-color)', fontWeight: 600, textDecoration: 'none' }}>
+                          Edit
+                        </Link>
+                        <button onClick={() => handleDeleteCategory(c.id)} style={{ background: 'none', border: 'none', color: '#ff7675', cursor: 'pointer', padding: '8px' }}>
                           <Trash2 size={18} />
                         </button>
                       </td>

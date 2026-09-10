@@ -2,16 +2,7 @@ import Link from 'next/link';
 import { ArrowRight, Sparkles, Recycle, ShieldCheck, Gamepad2 } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 
-const categories = [
-  { id: 'shirts', name: 'Shirts', gradient: "url('/images/boxes/shirt.jpeg') center/cover" },
-  { id: 't-shirts', name: 'T-Shirts', gradient: "url('/images/boxes/tshirt.jpeg') center/cover" },
-  { id: 'jackets', name: 'Jackets', gradient: "url('/images/boxes/jacket.jpeg') center/cover" },
-  { id: 'leather-jackets', name: 'Leather Jackets', gradient: "url('/images/boxes/leather-jackets.jpeg') center/cover" },
-  { id: 'bags', name: 'Bags', gradient: "url('/images/boxes/bags.jpeg') center/cover" },
-  { id: 'shoes', name: 'Shoes', gradient: "url('/images/shoes/shoebox.jpeg') center/cover" },
-  { id: 'sweaters', name: 'Sweaters', gradient: "url('/images/boxes/sweaters.jpeg') center/cover" },
-  { id: 'hoodies', name: 'Hoodies', gradient: "url('/images/boxes/hoodie.jpeg') center/cover" },
-];
+
 
 import { prisma } from '@/utils/prisma';
 
@@ -32,6 +23,10 @@ export default async function Home() {
     { id: 12, name: 'Zara High Top Suede Sneakers ', description: 'Brushed suede upper in warn camel/ wheat tan. durable, low profile vulcanized rubber cupsole with tonal foxing. smooth interior lining with a cusioned footbed for daily wear.', price: '1,899', images: ["url('/images/shoes/zara1.jpeg') center/cover", "url('/images/shoes/zara2.jpeg') center/cover", "url('/images/shoes/zara3.jpeg') center/cover", "url('/images/shoes/zara4.jpeg') center/cover", "url('/images/shoes/zara5.jpeg') center/cover"] },
     { id: 13, name: 'Dickies Suede Vintage Chelsea ', description: 'Matte Black Suede/innubuck upper with subtle texture.Wood look cuban heel with contrasting  welt sticthing. Rare find in this size and condition. Cleaned and restored by our team.', price: '1,299', images: ["url('/images/shoes/diki1.jpeg') center/cover", "url('/images/shoes/diki2.jpeg') center/cover", "url('/images/shoes/diki3.jpeg') center/cover", "url('/images/shoes/diki4.jpeg') center/cover", "url('/images/shoes/diki5.jpeg') center/cover", "url('/images/shoes/diki6.jpeg') center/cover"] },
   ];
+
+  const categories = await prisma.category.findMany({
+    orderBy: { createdAt: 'desc' }
+  });
 
   return (
     <div className="animate-fade-in">
@@ -104,9 +99,9 @@ export default async function Home() {
         <h2 className="mb-8" style={{ fontSize: '2.5rem', fontWeight: 700, textAlign: 'center' }}>Explore Categories</h2>
         <div className="grid grid-cols-4">
           {categories.map((cat) => (
-            <Link href={`/category/${cat.id}`} key={cat.id}>
+            <Link href={`/category/${cat.slug}`} key={cat.id}>
               <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ height: '220px', background: cat.gradient, position: 'relative', overflow: 'hidden' }}>
+                <div style={{ height: '220px', background: cat.imageUrl || '#333', position: 'relative', overflow: 'hidden' }}>
                   <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)', transition: 'background 0.3s ease' }} className="cat-overlay"></div>
                 </div>
                 <div style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
